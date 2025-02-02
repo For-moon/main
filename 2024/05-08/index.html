@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title> moon's gift </title>
+	<style type="text/css" media="all">
+@import url(https://fonts.googleapis.com/css?family=Pacifico);
+		body {
+			padding: 0px;
+			margin: 0px;
+			font-family: "Pacifico", cursive;
+			width: 100%;
+			height: 100vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-image: url('background.gif');
+			background-size: cover;
+		}
 
+		#textContainer {
+			text-align: center;
+			margin: 10px;
+			color: #C13FDD;
+			font-size: 50px;
+		}
+
+		#start {
+			font-family: "Pacifico", cursive;
+			font-size: 30px;
+			border-radius: 10px;
+			background-color: #00FF68;
+			color: #C13FDD;
+			border: none;
+		}
+	</style>
+</head>
+<body>
+	<button id="start"> Click me! </button>
+	<audio id="music">
+		<source src="gift.mp3" type="audio/mpeg">
+	</audio>
+	<p id="textContainer"></p>
+	<script>
+		var text = "                            My baby love you so much forever you and I !!! I love you oh I love you so much forever you and I.";
+		var textArray = text.split("");
+		var button = document.getElementById("start");
+		button.addEventListener("click", function () {
+			button.style.display = "none";
+			var audio = document.getElementById("music");
+			audio.play();
+			var idx = 0;
+			var output = "";
+			function displayText() {
+				var container = document.getElementById("textContainer");
+				output += textArray[idx];
+				container.textContent = output;
+				idx++;
+				if (idx >= textArray.length) {
+					clearInterval(intervalId);
+				}
+			}
+			var intervalId = setInterval(displayText, 100);
+		});
+	</script>
+</body>
+</html>
