@@ -1,0 +1,39 @@
+body {
+	margin: 0;
+	padding: 0;
+	background: linear-gradient(45deg,pink,violet);
+}
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	z-index: 1;
+	overflow: hidden;
+	position: sticky;
+	top: 0;
+	background-color: #38444d;
+}
+
+li {
+	float: left;
+}
+
+li a {
+	display: inline-block;
+	color: white;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+
+li a:hover {
+	background-color: red;
+}
+
+.selected {
+	background-color: red;
+}
+
+.remove {
+	display: none;
+}
