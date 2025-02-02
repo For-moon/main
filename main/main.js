@@ -21,7 +21,7 @@ function Selection () {
 			selectedDiv = document.querySelector('.' + e.id);
 			selectedDiv.classList.remove('remove');
 
-			folder = e.id.substr(1, 4);
+			folder = e.id.replace('_', '');
 		};
 	});
 }
