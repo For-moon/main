@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Page Title</title>
+	<style>
+@import url(https://fonts.googleapis.com/css?family=Pacifico);
+		body {
+			background: url(https://subtlepatterns.com/patterns/noise_lines.png);
+			font-family: "Pacifico", cursive;
+			overflow: hidden;
+			color: #fff;
+		}
+		.bgoverlay {
+			background: rgb(103, 58, 183);
+			background: rgba(103, 58, 183, 0.7);
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+		.container {
+			position: relative;
+			margin: 120px auto 0 auto;
+			width: 320px;
+		}
+
+		.ico {
+			display: block;
+			width: 320px;
+			height: 320px;
+		}
+		.open .ico {
+			animation: open 4s;
+			transform: scale(10);
+		}
+		.ico .title {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -95px;
+			margin-top: -73px;
+			z-index: 4;
+			font-size: 50px;
+			font-family: "Pacifico", cursive;
+			color: #fff;
+			cursor: pointer;
+			text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3);
+		}
+		.open .ico .title {
+			opacity: 0;
+			transition: all 0.3s ease;
+			top: -100px;
+		}
+		.ico:before,
+		.ico:after,
+		.ico2:before,
+		.ico2:after {
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		.ico:before,
+		.ico:after,
+		.ico2:before,
+		.ico2:after {
+			display: block;
+			font-size: 20em;
+			color: #ff4081;
+			content: "\f004";
+			font-family: FontAwesome;
+			text-rendering: auto;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+		}
+		.ico2:before, .ico2:after {
+			color: #e91e63;
+		}
+		.ico:before {
+			z-index: 3;
+		}
+		.ico:after {
+			animation: explode 4s infinite;
+		}
+		.ico2:before {
+			animation: explodeSmall 3s infinite;
+		}
+		.ico2:after {
+			animation: explodeSmall 2s infinite;
+		}
+
+		.endtext {
+			opacity: 0;
+			position: absolute;
+			top: -100px;
+			width: 100%;
+		}
+		.open .endtext {
+			top: 0;
+			opacity: 1;
+			animation: show 5s;
+		}
+		.endtext .close {
+			position: absolute;
+			top: 0;
+			right: 0;
+			cursor: pointer;
+			text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3);
+		}
+		.endtext h1,
+		.endtext h2,
+		.endtext h3 {
+			text-shadow: 2px 4px 3px rgba(0, 0, 0, 0.3);
+			text-align: center;
+			font-weight: normal;
+		}
+		.endtext h1 {
+			font-size: 50px;
+		}
+		.endtext h2 {
+			font-size: 30px;
+		}
+		.endtext h3 {
+			font-size: 20px;
+		}
+
+@keyframes explode {
+			from {
+				transform: scale(1);
+				opacity: 1;
+			}
+			to {
+				transform: scale(1.6);
+				opacity: 0;
+			}
+		}
+@keyframes explodeSmall {
+			from {
+				transform: scale(1);
+				opacity: 1;
+			}
+			to {
+				transform: scale(1.2);
+				opacity: 0;
+			}
+		}
+
+@keyframes open {
+			from {
+				transform: scale(1);
+			}
+			to {
+				transform: scale(10);
+			}
+		}
+
+@keyframes show {
+			from {
+				opacity: 0;
+				top: -100px;
+			}
+			to {
+				opacity: 1;
+				top: 0;
+			}
+		}
+		img {
+			width: 53vw;
+			height: auto;
+			border-radius: 15px;
+		}
+	</style>
+</head>
+<body>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$(".title").click(function () {
+				$(".container").addClass("open");
+			});
+
+			$(".close").click(function () {
+				$(".container").removeClass("open");
+			});
+		});
+		function chuyenHuong() {
+			window.location.href = 'qua.html';
+		}
+	</script>
+
+	<div class="bgoverlay">
+		<div class="container">
+			<span class="ico">
+				<span class="ico2"></span>
+				<span class="title">Click Me</span>
+			</span>
+			<div class="endtext">
+				<span class="close" title="Restart"><i class="fa fa-times"></i></span>
+				<h1>Chúc mừng valentine vợ iu</h1>
+				<h2> Cảm ơn em đã yêu anh, đã cho anh biết được hạnh phúc thật sự nó như thế nào 💗. <br> Quãng thời gian nghỉ tết vừa qua anh đã rất nhớ người mà anh yêu, anh chỉ muốn chạy đến và ôm em thật chặt 🫂. Tuy sắp gặp được em rồi nhưng anh mong là sẽ được hẹn hò với em sớm vì anh muốn được thân mật với em như lần trước .</h2>
+				<img src="img1.jpeg" alt="Hình ảnh">
+				<h2> <a onclick="chuyenHuong()"> [Ấn vào đây để nhận món quà nho nhỏ của chồng.]</a> </h2>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
