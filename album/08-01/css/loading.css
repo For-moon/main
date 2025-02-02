@@ -1,0 +1,77 @@
+#loading {
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #00F3FF;
+}
+h1 {
+	font-family: 'Pacifico', cursive;
+	text-align: center;
+	color: #E36777;
+}
+
+:root {
+	--pink: #ff2581;
+}
+.loading {
+	fill: transparent;
+	stroke: var(--pink);
+	stroke-width: 20;
+	cursor: pointer;
+	position: relative;
+}
+.loading svg {
+	overflow: visible;
+	width: 10rem;
+}
+.loading path {
+	stroke-dashoffset: 0;
+	stroke-dasharray: 1550;
+	transform-origin: center;
+}
+.heart-background {
+	position: absolute;
+	left: 0;
+	right: 0;
+	z-index: -1;
+	stroke: none;
+}
+.heart-main path {
+	animation: stroke-animation 2s ease-in-out forwards infinite;
+}
+#loading.loading-end {animation: end linear 1.8s 1s both;}
+
+@keyframes stroke-animation {
+	0% {stroke-dashoffset: 0;}
+	30% {stroke-dashoffset: 1550;}
+	60% {
+		stroke-dashoffset: 3100;
+		fill: transparent;
+		transform: scale(1);
+	}
+	80% {
+		fill: var(--pink);
+		transform: scale(1.1);
+	}
+	90% {transform: scale(1);}
+	100% {
+		stroke-dashoffset: 3100;
+		fill: var(--pink);
+	}
+}
+@keyframes end {
+	0% {opacity: 1;}
+	10% {opacity: 0.9;}
+	20% {opacity: 0.8;}
+	30% {opacity: 0.7;}
+	40% {opacity: 0.6;}
+	50% {opacity: 0.5;}
+	60% {opacity: 0.4;}
+	70% {opacity: 0.3;}
+	80% {opacity: 0.2;}
+	90% {opacity: 0.1;}
+	100% {opacity: 0;}
+}
