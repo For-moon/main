@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title> Tặng nàng công chúa xinh đẹp của ck </title>
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="mouse.css">
+</head>
+<body>
+	<div class="container">
+		<div class="valentines">
+			<div class="envelope"></div>
+			<div class="front"></div>
+			<div class="card">
+				<div class="text">
+					Ck tặng vk iu cái này <br>
+					và chúc vk iu của ck <br>
+					thi thật tốt nha <br>
+				</div>
+				<div class="heart"></div>
+				<div class="hearts">
+					<div class="one"></div>
+					<div class="two"></div>
+					<div class="three"></div>
+					<div class="four"></div>
+					<div class="five"></div>
+				</div>
+			</div>
+		</div>
+		<div class="shadow"></div>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$(".container")
+			.mouseenter(function () {
+				$(".card").stop().animate(
+					{
+						top: "-90px"
+					},
+					"slow"
+				);
+			})
+			.mouseleave(function () {
+				$(".card").stop().animate(
+					{
+						top: 0
+					},
+					"slow"
+				);
+			});
+		});
 
+		const allElements = document.querySelectorAll("*");
+		allElements.forEach(element => {
+			element.addEventListener("mousemove", (e) => {
+				e.stopPropagation();
+				const xPosition = e.offsetX;
+				const yPosition = e.offsetY;
+				const spanElement = document.createElement("span");
+				spanElement.style.left = xPosition + "px";
+				spanElement.style.top = yPosition + "px";
+				const size = (Math.random() * 100)/50 + 25;
+				spanElement.style.width = size + "px";
+				spanElement.style.height = size + "px";
+				element.appendChild(spanElement);
+				setTimeout(() => {
+					spanElement.remove();
+				}, 3000)
+			});
+		});
+	</script>
+</body>
+</html>

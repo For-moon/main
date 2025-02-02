@@ -1,0 +1,44 @@
+span {
+	height: 50px;
+	width: 50px;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+	background-image: url(https://cdn-icons-png.flaticon.com/512/833/833472.png);
+	-webkit-background-size: cover;
+	background-size: cover;
+	background-position: center;
+	position: absolute;
+	pointer-events: none;
+	left: 50%;
+	top: 50%;
+	-webkit-transform: translate(-50%,-50%);
+	-moz-transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	-o-transform: translate(-50%,-50%);
+	transform: translate(-50%,-50%);
+	-webkit-animation: scroll 6s linear;
+	-o-animation: scroll 6s linear;
+	animation: scroll 5s linear;
+}
+
+@keyframes scroll {
+	0% {
+		-webkit-transform: translate(-50%,-50%);
+		-moz-transform: translate(-50%,-50%);
+		-ms-transform: translate(-50%,-50%);
+		-o-transform: translate(-50%,-50%);
+		transform: translate(-50%,-50%);
+		opacity: 1;
+		filter: hue-rotate(0);
+	}
+	100% {
+		-webkit-transform: translate(-50%,-5000%);
+		-moz-transform: translate(-50%,-5000%);
+		-ms-transform: translate(-50%,-5000%);
+		-o-transform: translate(-50%,-5000%);
+		transform: translate(-50%,-5500%);
+		opacity: 0;
+		filter: hue-rotate(360deg);
+	}
+}
