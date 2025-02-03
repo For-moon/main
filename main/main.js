@@ -13,8 +13,10 @@ function Selection () {
 	arrMenu.forEach(function(e) {
 		e.onclick = function() {
 			selectedId.classList.remove('selected');
+			selectedId.classList.add('hover');
 			selectedId = e;
 			selectedId.classList.add('selected');
+			selectedId.classList.remove('hover');
 
 			selectedDiv.classList.add('remove');
 			selectedDiv = document.querySelector('.' + e.id);

@@ -26,12 +26,12 @@ li a {
 	text-decoration: none;
 }
 
-li a:hover {
+li .hover:hover {
 	background-color: red;
 }
 
 .selected {
-	background-color: red;
+	background-color: #20272C;
 }
 
 .remove {
