@@ -7,7 +7,6 @@ function Load() {
 	selectedDiv = document.querySelector('.album');
 	selectedId.classList.add('selected');
 	selectedDiv.classList.remove('remove');
-	folder = "album";
 }
 
 function Selection () {
@@ -20,8 +19,6 @@ function Selection () {
 			selectedDiv.classList.add('remove');
 			selectedDiv = document.querySelector('.' + e.id);
 			selectedDiv.classList.remove('remove');
-
-			folder = e.id.replace('_', '');
 		};
 	});
 }
@@ -29,10 +26,9 @@ function Selection () {
 function Click() {
 	arrCard.forEach(function(card) {
 		card.onclick = function() {
-			file = card.classList[1].substr(1, 5);
-			link = "../" + folder + "/" + file + "/index.html"
-			window.location.href = link;
+			window.location.href = "../" + card.classList[1].slice(7) + "/" + card.classList[1].slice(1, 6) + "/" + "index.html";
 		};
+		card.style.backgroundImage = "url('" + "../" + card.classList[1].slice(7) + "/" + card.classList[1].slice(1, 6) + "/" + "demo.jpg" + "')";
 	});
 }
 
