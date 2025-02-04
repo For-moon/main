@@ -2,8 +2,9 @@ body {
 	margin: 0;
 	padding: 0;
 	background-image: url('bg.webp');
-	background-repeat: no-repeat;
-	background-size: auto 100vh;
+	background-size: cover;
+	background-attachment: fixed;
+	background-position: center;
 }
 ul {
 	list-style-type: none;
