@@ -1,7 +1,8 @@
 body {
 	margin: 0;
 	padding: 0;
-	background: linear-gradient(45deg,pink,violet);
+	background-image: url('bg.webp');
+	background-size: cover;
 }
 ul {
 	list-style-type: none;
@@ -34,6 +35,6 @@ li .hover:hover {
 	background-color: #20272C;
 }
 
-.remove {
+div.remove {
 	display: none;
 }

@@ -1,14 +1,18 @@
 .body {
 	z-index: 0;
+	margin: 30px 0px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 30px 50px;
+	justify-content: center;
 }
 
 .card {
-	margin: 30px auto;
 	border: 1px solid #575757;
 	border-radius: 14px;
 	background-size: contain;
-	width: 80%;
-	aspect-ratio: 16 / 9;
+	width: 320px;
+	height: 180px;
 	position: relative;
 	display: grid;
 	align-items: end;
@@ -31,4 +35,12 @@ div .text {
 	border-radius: 0px 0px 14px 14px;
 	color: #ffffff;
 	background-color: #2E2E2E;
+}
+
+@media (min-width: 960px) {
+	.card {
+		width: 32vw;
+		height: 18vw;
+		border-radius: 1.4vw;
+	}
 }
