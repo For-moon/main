@@ -28,8 +28,8 @@ onload = () => {
 		document.body.classList.remove("not-loaded");
 		clearTimeout(c);
 	}, 500);
-	//const d = setTimeout(function() {
-	//	typeWriter(paragraph, document.querySelector('.happy-woman-day'));
-	//	clearTimeout(d);
-	//}, 1000);
+	const d = setTimeout(function() {
+		typeWriter(paragraph, document.querySelector('.happy-woman-day'));
+		clearTimeout(d);
+	}, 1000);
 };
