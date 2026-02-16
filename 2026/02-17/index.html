@@ -1,1 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+  <title>Chúc mừng năm mới 2026 - Tết Bính Ngọ</title>
+  <!-- Font Awesome 6 & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- HERO & COUNTDOWN -->
+    <section class="hero">
+      <h1>Chúc mừng năm mới</h1>
+      <div class="sub">
+        <i class="fas fa-horse-head"></i> Tết Bính Ngọ 2026 <i class="fas fa-horse-head"></i>
+      </div>
+      <p style="font-size:1.5rem; margin-bottom: 15px; color: #ffe28c;">🌟 Xuân an lành - Phú quý vinh hoa 🌟</p>
+
+      <div class="countdown-box" id="countdown">
+        <div class="time-section">
+          <div class="time-number" id="days">00</div>
+          <div class="time-label">NGÀY</div>
+        </div>
+        <div class="time-section">
+          <div class="time-number" id="hours">00</div>
+          <div class="time-label">GIỜ</div>
+        </div>
+        <div class="time-section">
+          <div class="time-number" id="minutes">00</div>
+          <div class="time-label">PHÚT</div>
+        </div>
+        <div class="time-section">
+          <div class="time-number" id="seconds">00</div>
+          <div class="time-label">GIÂY</div>
+        </div>
+      </div>
+
+      <!-- Thông báo chờ Tết -->
+      <div id="waitingArea" class="waiting-message">
+        <i class="fas fa-clock"></i> Hãy chờ khoảnh khắc giao thừa <i class="fas fa-clock"></i>
+      </div>
+    </section>
+
+    <!-- KHU VỰC NÚT "MỞ CỬA ĐÓN XUÂN" (chỉ hiện sau countdown) -->
+    <div id="postCountdownArea" class="button-area hidden-content">
+      <button id="openIntroBtn" class="action-btn">
+        <i class="fas fa-door-open"></i> Mở cửa đón xuân
+        <i class="fas fa-cherry-blossom"></i>
+      </button>
+    </div>
+
+    <!-- TOÀN BỘ NỘI DUNG TẾT (ẨN BAN ĐẦU) -->
+    <div id="springReveal">
+      <!-- INTRO HÌNH ẢNH RỰC RỠ (gallery) -->
+      <section class="gallery-section hidden-content" id="gallerySection">
+        <h2 class="section-title">✨ Sắc màu ngày Tết ✨</h2>
+        <div class="gallery-grid">
+          <div class="gallery-item">
+            <img src="imgs/01.jpeg" alt="Hoa đào" loading="lazy">
+            <div class="overlay-text">🌸 Hoa đào Bắc - may mắn</div>
+          </div>
+          <div class="gallery-item">
+            <img src="imgs/02.jpeg" alt="Hoa mai" loading="lazy">
+            <div class="overlay-text">🌼 Hoa mai vàng - phát lộc</div>
+          </div>
+          <div class="gallery-item">
+            <img src="imgs/03.jpeg" alt="Bánh chưng" loading="lazy">
+            <div class="overlay-text">🍃 Bánh chưng xanh</div>
+          </div>
+          <div class="gallery-item">
+            <img src="imgs/04.jpg" alt="Lì xì" loading="lazy">
+            <div class="overlay-text">🧧 Lì xì đỏ - tài lộc</div>
+          </div>
+        </div>
+        <p style="text-align: center; margin: 30px 0 15px; color: #ffdbb5; font-size: 1.2rem;">
+          <i class="fas fa-star"></i> Mùa xuân ngập tràn yêu thương <i class="fas fa-star"></i>
+        </p>
+
+        <!-- NÚT MỞ THIỆP NẰM TRONG INTRO -->
+        <div class="open-card-btn-wrapper">
+          <button id="openCardBtn" class="card-trigger-btn">
+            <i class="fas fa-gift"></i> Mở thiệp chúc Tết
+            <i class="fas fa-red-envelope"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- THIỆP CHÚC TẾT 2026 -->
+      <section class="card-container hidden-content" id="cardSection">
+        <div class="new-year-card">
+          <div class="card-icon">
+            <i class="fas fa-horse"></i>
+          </div>
+          <div class="card-title">Năm Bính Ngọ</div>
+          <div class="card-sub">“Mã đáo thành công”</div>
+          <div class="card-message">🎊 An khang - Thịnh vượng 🎊</div>
+
+          <!-- ĐOẠN VĂN CHÚC TẾT NGẮN -->
+          <div class="tet-wish-text">
+            <i class="fas fa-quote-left" style="color:#d35400;"></i>
+            Mai vàng khoe sắc thắm tươi, <br>
+            Xuân sang anh chúc em cười thật xinh. <br>
+            Dịu dàng như ánh bình minh, <br>
+            Bên anh em nhé chữ tình mãi tươi. <br>
+            <br>
+            Năm mới phút chốc đã sang, <br>
+            Chúc em may mắn, an khang đủ đầy. <br>
+            Đôi mình hạnh phúc sum vầy, <br>
+            Yêu thương đơm nụ tháng ngày ngát hương.
+            <i class="fas fa-quote-right" style="color:#d35400;"></i>
+          </div>
+
+          <div class="card-footer">
+            <i class="fas fa-red-envelope"></i> 2026 <i class="fas fa-red-envelope"></i>
+          </div>
+
+          <!-- NÚT NHẬN LỜI CHÚC -->
+          <button id="receiveWishBtn" class="receive-wish-btn">
+            <i class="fas fa-gift"></i> Nhận lời chúc
+          </button>
+
+          <p style="margin-top: 20px; font-size: 1.1rem; color: #824a28;">
+            ✦ Tết sum vầy – Ngựa vàng tiến bước ✦
+          </p>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="hidden-content" id="footerSection">
+        <span><i class="fas fa-copyright"></i> Xuân Bính Ngọ 2026</span>
+        <span><i class="fas fa-heart" style="color: #ff6b6b;"></i> Chúc Tết an lành</span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- CONTAINER CHO TOAST MESSAGE -->
+  <div id="toastContainer"
+    style="position: fixed; bottom: 30px; left: 0; width: 100%; pointer-events: none; z-index: 10000;"></div>
+
+  <script src="script.js"> </script>
+
+</body>
+
+</html>
