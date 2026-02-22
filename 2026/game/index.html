@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥💧 Fireboy & Watergirl Online</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+:root {
+  --fire:#ff4500; --fire2:#ff8c00;
+  --water:#00bfff; --water2:#1e90ff;
+  --dark:#0a0a18; --panel:rgba(255,255,255,0.05); --border:rgba(255,255,255,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);font-family:'Nunito',sans-serif;color:#fff;height:100vh;width:100vw;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 15% 40%,rgba(255,69,0,.12) 0%,transparent 55%),
+             radial-gradient(ellipse at 85% 40%,rgba(0,191,255,.12) 0%,transparent 55%),
+             radial-gradient(ellipse at 50% 110%,rgba(120,0,200,.08) 0%,transparent 50%);}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;align-items:center;justify-content:center;}
+.screen.active{display:flex;}
+
+h1{font-family:'Fredoka One',cursive;font-size:2.5rem;text-align:center;letter-spacing:1px;
+  background:linear-gradient(90deg,#ff4500,#ff8c00 30%,#00bfff 70%,#1e90ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 22px rgba(255,100,0,.35));animation:glow 3s ease-in-out infinite;}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 22px rgba(255,100,0,.35))}50%{filter:drop-shadow(0 0 30px rgba(0,191,255,.45))}}
+
+.card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;
+  padding:20px 26px;backdrop-filter:blur(14px);width:100%;max-width:420px;display:flex;flex-direction:column;gap:11px;}
+.card-title{font-family:'Fredoka One',cursive;font-size:.9rem;opacity:.5;text-align:center;
+  text-transform:uppercase;letter-spacing:2.5px;}
+
+.btn{padding:11px 17px;border-radius:13px;border:none;font-family:'Fredoka One',cursive;
+  font-size:.95rem;cursor:pointer;transition:all .18s;letter-spacing:.5px;}
+.btn-fire{background:linear-gradient(135deg,#ff4500,#ff8c00);color:#fff;box-shadow:0 4px 18px rgba(255,69,0,.35);}
+.btn-fire:hover{transform:translateY(-2px);box-shadow:0 6px 26px rgba(255,69,0,.55);}
+.btn-water{background:linear-gradient(135deg,#1e90ff,#00bfff);color:#fff;box-shadow:0 4px 18px rgba(0,191,255,.35);}
+.btn-water:hover{transform:translateY(-2px);box-shadow:0 6px 26px rgba(0,191,255,.55);}
+.btn-outline{background:transparent;border:1px solid var(--border);color:rgba(255,255,255,.65);}
+.btn-outline:hover{background:rgba(255,255,255,.08);color:#fff;}
+.btn-purple{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;box-shadow:0 4px 18px rgba(124,58,237,.4);}
+.btn-purple:hover{transform:translateY(-2px);box-shadow:0 6px 26px rgba(168,85,247,.55);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;}
+
+input[type=text]{background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:12px;
+  padding:11px 15px;color:#fff;font-size:1rem;font-family:'Nunito',sans-serif;width:100%;outline:none;transition:border-color .2s;}
+input[type=text]:focus{border-color:rgba(255,255,255,.4);}
+input[type=text]::placeholder{color:rgba(255,255,255,.3);}
+
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+.dot-connecting{background:#ffd700;animation:blink 1s infinite;}
+.dot-connected{background:#00ff88;}
+.dot-waiting{background:#aaa;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ===== LOBBY ===== */
+#screen-lobby{gap:14px;padding:18px;overflow-y:auto;}
+.role-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.role-btn{padding:13px;border-radius:14px;border:2px solid transparent;cursor:pointer;
+  font-family:'Fredoka One',cursive;font-size:1rem;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(255,255,255,.04);color:#fff;}
+.role-btn.fire-role{border-color:var(--fire);}
+.role-btn.fire-role:hover,.role-btn.fire-role.active{background:linear-gradient(135deg,rgba(255,69,0,.28),rgba(255,140,0,.15));box-shadow:0 0 20px rgba(255,69,0,.4);}
+.role-btn.water-role{border-color:var(--water2);}
+.role-btn.water-role:hover,.role-btn.water-role.active{background:linear-gradient(135deg,rgba(0,191,255,.28),rgba(30,144,255,.15));box-shadow:0 0 20px rgba(0,191,255,.4);}
+.role-icon{font-size:1.8rem;}
+
+.room-code-display{background:linear-gradient(135deg,rgba(255,140,0,.1),rgba(0,191,255,.1));
+  border:1px dashed rgba(255,255,255,.2);border-radius:12px;padding:11px;text-align:center;
+  font-family:'Fredoka One',cursive;font-size:1.9rem;letter-spacing:8px;cursor:pointer;transition:all .2s;}
+.room-code-display:hover{border-color:rgba(255,255,255,.4);}
+.room-code-display .hint{font-family:'Nunito',sans-serif;font-size:.68rem;letter-spacing:1px;opacity:.3;margin-top:2px;}
+#status-msg,#join-status{text-align:center;font-size:.8rem;color:rgba(255,255,255,.55);min-height:18px;}
+
+/* ===== LEVEL SELECT ===== */
+#screen-levels{gap:0;padding:0;overflow:hidden;}
+#levels-inner{display:flex;flex-direction:column;align-items:center;width:100%;height:100%;
+  overflow-y:auto;padding:24px 18px 30px;gap:20px;}
+#levels-inner::-webkit-scrollbar{width:4px;}
+#levels-inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:4px;}
+
+.levels-header{display:flex;align-items:center;gap:14px;width:100%;max-width:720px;}
+.levels-header h1{flex:1;font-size:1.8rem;text-align:left;}
+
+.levels-progress{width:100%;max-width:720px;display:flex;align-items:center;gap:12px;font-size:.82rem;color:rgba(255,255,255,.45);}
+.progress-bar{flex:1;height:6px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#ff4500,#00bfff);border-radius:4px;transition:width .5s;}
+
+.levels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px;width:100%;max-width:720px;}
+
+.level-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:17px;padding:16px 14px;cursor:pointer;transition:all .22s;
+  display:flex;flex-direction:column;gap:7px;position:relative;overflow:hidden;}
+.level-card::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;
+  background:var(--lc,linear-gradient(135deg,#ff4500,#1e90ff));}
+.level-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.18);}
+.level-card:hover::after{opacity:.07;}
+.level-card.completed{border-color:rgba(0,255,136,.28);}
+.lc-num{font-family:'Fredoka One',cursive;font-size:.7rem;opacity:.4;letter-spacing:2px;text-transform:uppercase;}
+.lc-name{font-family:'Fredoka One',cursive;font-size:1rem;line-height:1.2;}
+.lc-desc{font-size:.73rem;opacity:.48;line-height:1.4;}
+.lc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:1px;}
+.lc-tag{font-size:.62rem;padding:2px 7px;border-radius:20px;background:rgba(255,255,255,.07);
+  color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.09);}
+.lc-stars{font-size:.82rem;margin-top:1px;}
+.lc-badge{position:absolute;top:10px;right:10px;font-size:.65rem;padding:2px 7px;
+  border-radius:20px;font-family:'Fredoka One',cursive;}
+.badge-new{background:rgba(0,255,136,.13);color:#00ff88;border:1px solid rgba(0,255,136,.28);}
+.badge-done{background:rgba(255,215,0,.13);color:#ffd700;border:1px solid rgba(255,215,0,.28);}
+.diff-bar{display:flex;gap:3px;align-items:center;}
+.diff-dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+
+/* ===== GAME ===== */
+#screen-game{display:none;z-index:1;flex-direction:column;height:100vh;}
+#screen-game.active{display:flex;}
+#hud{display:flex;justify-content:space-between;align-items:center;padding:6px 13px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);flex-shrink:0;}
+.phud{display:flex;align-items:center;gap:5px;font-family:'Fredoka One',cursive;font-size:.85rem;}
+.phud.fhud{color:#ff8c00;} .phud.whud{color:#00bfff;}
+#canvas-wrapper{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+canvas{display:block;image-rendering:pixelated;}
+#controls-hint{display:flex;justify-content:space-between;padding:5px 13px;
+  background:rgba(0,0,0,.4);font-size:.67rem;color:rgba(255,255,255,.28);flex-shrink:0;}
+
+/* Overlays */
+.game-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.83);z-index:100;
+  flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.game-overlay.show{display:flex;}
+.overlay-title{font-family:'Fredoka One',cursive;font-size:2.8rem;animation:popIn .55s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{transform:scale(.3) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.overlay-sub{color:rgba(255,255,255,.5);font-size:.9rem;}
+.overlay-btns{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:4px;}
+.stars-display{font-size:2.1rem;letter-spacing:4px;animation:popIn .6s .2s both;}
+
+/* Mobile D-pad */
+#mobile-controls{display:none;position:fixed;bottom:50px;left:0;right:0;
+  justify-content:space-between;padding:0 14px;z-index:50;pointer-events:none;}
+.dpad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,44px);gap:3px;pointer-events:all;}
+.dpad-btn{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-size:1.25rem;cursor:pointer;
+  user-select:none;-webkit-user-select:none;touch-action:none;transition:background .1s;}
+.dpad-btn:active,.dpad-btn.pressed{background:rgba(255,255,255,.32);}
+.dpad-left{grid-column:1;grid-row:1} .dpad-right{grid-column:3;grid-row:1}
+.dpad-up{grid-column:2;grid-row:1}
+.dpad-space{grid-column:1/4;grid-row:2;border-radius:11px;font-family:'Fredoka One',cursive;font-size:.82rem;}
+@media(max-width:700px){#mobile-controls{display:flex;}h1{font-size:1.65rem;}}
+
+/* Toast */
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-60px);
+  background:rgba(0,255,136,.14);border:1px solid rgba(0,255,136,.32);color:#00ff88;
+  padding:7px 17px;border-radius:30px;font-family:'Fredoka One',cursive;
+  transition:transform .3s;z-index:200;pointer-events:none;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+.ping-badge{font-size:.67rem;background:rgba(0,255,136,.11);color:#00ff88;
+  padding:2px 7px;border-radius:20px;border:1px solid rgba(0,255,136,.22);}
+</style>
+</head>
+<body>
+<div id="toast">✅ Đã copy mã phòng!</div>
+
+<!-- ===== LOBBY ===== -->
+<div id="screen-lobby" class="screen active">
+  <h1>🔥 Fireboy &amp; 💧 Watergirl</h1>
+  <p style="color:rgba(255,255,255,.38);font-size:.85rem;text-align:center">Online 2 người · Kết nối P2P</p>
+
+  <div class="card">
+    <div class="card-title">Chọn nhân vật</div>
+    <div class="role-selector">
+      <button class="role-btn fire-role active" id="btn-fire" onclick="selectRole('fire')">
+        <span class="role-icon">🔥</span>
+        <span style="font-family:'Fredoka One',cursive">Fireboy</span>
+        <span style="font-size:.67rem;opacity:.45">← → ↑</span>
+      </button>
+      <button class="role-btn water-role" id="btn-water" onclick="selectRole('water')">
+        <span class="role-icon">💧</span>
+        <span style="font-family:'Fredoka One',cursive">Watergirl</span>
+        <span style="font-size:.67rem;opacity:.45">← → ↑</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏠 Tạo phòng (Host)</div>
+    <button class="btn btn-fire" id="btn-create" onclick="createRoom()">Tạo phòng mới</button>
+    <div id="room-code-area" style="display:none;flex-direction:column;gap:9px">
+      <div class="room-code-display" onclick="copyCode()" id="room-code-text">----<div class="hint">Click để copy mã</div></div>
+      <div id="status-msg"><span class="status-dot dot-waiting"></span>Đang chờ người chơi 2...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🚪 Tham gia phòng</div>
+    <input type="text" id="join-code" placeholder="Nhập mã phòng (4 ký tự)" maxlength="4"
+      style="text-align:center;letter-spacing:5px;font-size:1.15rem;text-transform:uppercase">
+    <button class="btn btn-water" id="btn-join" onclick="joinRoom()">Tham gia</button>
+    <div id="join-status"></div>
+  </div>
+
+  <div style="display:flex;gap:9px;flex-wrap:wrap;justify-content:center">
+    <button class="btn btn-purple" onclick="goLevelSelect()">📜 Chọn màn chơi</button>
+    <button class="btn btn-outline" style="font-size:.78rem;padding:8px 13px" onclick="startSolo(0)">⚡ Bắt đầu nhanh (Màn 1)</button>
+  </div>
+</div>
+
+<!-- ===== LEVEL SELECT ===== -->
+<div id="screen-levels" class="screen">
+  <div id="levels-inner">
+    <div class="levels-header">
+      <button class="btn btn-outline" style="padding:7px 13px;font-size:.78rem;flex-shrink:0" onclick="showScreen('screen-lobby')">← Lobby</button>
+      <h1>📜 Danh Sách Màn</h1>
+    </div>
+    <div class="levels-progress">
+      <span id="prog-text">0 / 10 hoàn thành</span>
+      <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="levels-grid" id="levels-grid"></div>
+    <p style="font-size:.7rem;color:rgba(255,255,255,.22);text-align:center;padding-bottom:6px">
+      ⭐⭐⭐ = hoàn thành nhanh + thu thập hết đá quý
+    </p>
+  </div>
+</div>
+
+<!-- ===== GAME ===== -->
+<div id="screen-game" class="screen">
+  <div id="hud">
+    <div class="phud fhud">🔥 <span id="fire-gems">💎 0</span></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span id="ping-display" class="ping-badge" style="display:none">● Online</span>
+      <span style="font-family:'Fredoka One',cursive;opacity:.4;font-size:.78rem" id="level-display">Màn 1</span>
+      <button class="btn btn-outline" style="padding:3px 10px;font-size:.7rem" onclick="openLevelSelectFromGame()">📜</button>
+      <button class="btn btn-outline" style="padding:3px 10px;font-size:.7rem" onclick="backToLobby()">⬅</button>
+    </div>
+    <div class="phud whud"><span id="water-gems">💎 0</span> 💧</div>
+  </div>
+  <div id="canvas-wrapper"><canvas id="gameCanvas"></canvas></div>
+  <div id="controls-hint">
+    <span>🔥 Fireboy: ← → ↑ (hoặc A D W)</span>
+    <span>💧 Watergirl: ← → ↑ (hoặc A D W)</span>
+  </div>
+</div>
+
+<!-- Mobile D-pad -->
+<div id="mobile-controls">
+  <div class="dpad">
+    <div class="dpad-btn dpad-left" data-key="ArrowLeft">◀</div>
+    <div class="dpad-btn dpad-up" data-key="ArrowUp">▲</div>
+    <div class="dpad-btn dpad-right" data-key="ArrowRight">▶</div>
+    <div class="dpad-btn dpad-space" data-key="ArrowUp">NHẢY</div>
+  </div>
+  <div style="pointer-events:all;display:flex;align-items:flex-end;padding-bottom:5px">
+    <span style="font-size:.6rem;opacity:.22;font-family:'Fredoka One',cursive">P1↑ P2 WASD</span>
+  </div>
+  <div class="dpad">
+    <div class="dpad-btn dpad-left" data-key="a">◀</div>
+    <div class="dpad-btn dpad-up" data-key="w">▲</div>
+    <div class="dpad-btn dpad-right" data-key="d">▶</div>
+    <div class="dpad-btn dpad-space" data-key="w">NHẢY</div>
+  </div>
+</div>
+
+<!-- Win / Dead overlays -->
+<div class="game-overlay" id="win-overlay">
+  <div class="overlay-title">🎉 Chiến Thắng!</div>
+  <div class="stars-display" id="win-stars">⭐⭐⭐</div>
+  <div class="overlay-sub">Cả hai đã đến cổng đích!</div>
+  <div class="overlay-btns">
+    <button class="btn btn-fire" onclick="nextLevel()">Màn tiếp →</button>
+    <button class="btn btn-outline" onclick="loadLevel()">🔄 Chơi lại</button>
+    <button class="btn btn-purple" onclick="openLevelSelectFromGame()">📜 Chọn màn</button>
+  </div>
+</div>
+<div class="game-overlay" id="dead-overlay">
+  <div class="overlay-title">💀 Thất bại!</div>
+  <div class="overlay-sub">Một nhân vật đã chết. Thử lại nào!</div>
+  <div class="overlay-btns">
+    <button class="btn btn-fire" onclick="retryLevel()">🔄 Thử lại</button>
+    <button class="btn btn-outline" onclick="openLevelSelectFromGame()">📜 Chọn màn</button>
+  </div>
+</div>
+
+<script>
+// =====================================================
+//  10 LEVELS
+// =====================================================
+const LEVELS = [
+// 1
+{ name:'Khởi Đầu', icon:'🌱', diff:1, desc:'Màn tutorial – học phối hợp cùng nhau.', tags:['tutorial','dễ'],
+  width:20,height:14,
+  map:[
+    '####################',
+    '#..................#',
+    '#.F.............W..#',
+    '#.######....######.#',
+    '#..................#',
+    '#....f...........w.#',
+    '#.######...........#',
+    '#..................#',
+    '#.......######.....#',
+    '#..................#',
+    '#..####............#',
+    '#..................#',
+    '#.........E....E...#',
+    '####################',
+  ],
+  firePortal:{x:16,y:11}, waterPortal:{x:10,y:11},
+  firePuddles:[{x:2,y:11,w:3}], waterPuddles:[{x:6,y:11,w:3}], greenPuddles:[],
+},
+// 2
+{ name:'Hố Lửa', icon:'🔥', diff:2, desc:'Nhiều ao lửa – Watergirl phải cẩn thận!', tags:['lửa','trung bình'],
+  width:22,height:15,
+  map:[
+    '######################',
+    '#....................#',
+    '#.F...............W..#',
+    '#.####..........####.#',
+    '#....................#',
+    '#....w.........f.....#',
+    '#..######...######...#',
+    '#....................#',
+    '#......####..........#',
+    '#....f....f....w.....#',
+    '#....................#',
+    '#.####.......####....#',
+    '#....................#',
+    '#.......E.....E......#',
+    '######################',
+  ],
+  firePortal:{x:14,y:12}, waterPortal:{x:8,y:12},
+  firePuddles:[{x:2,y:12,w:2},{x:7,y:12,w:2}],
+  waterPuddles:[{x:12,y:12,w:2},{x:17,y:12,w:2}],
+  greenPuddles:[],
+},
+// 3
+{ name:'Đầm Lầy', icon:'☣️', diff:2, desc:'Ao xanh độc – cả hai đều phải tránh!', tags:['ao độc','trung bình'],
+  width:22,height:15,
+  map:[
+    '######################',
+    '#....................#',
+    '#.W...............F..#',
+    '#.####..........####.#',
+    '#....................#',
+    '#.........f..........#',
+    '#.....######.........#',
+    '#.........w..........#',
+    '#..####..............#',
+    '#....................#',
+    '#........######......#',
+    '#....................#',
+    '#...####.......####..#',
+    '#..e......E......e...#',
+    '######################',
+  ],
+  firePortal:{x:14,y:12}, waterPortal:{x:5,y:12},
+  firePuddles:[{x:2,y:12,w:2}], waterPuddles:[{x:17,y:12,w:2}], greenPuddles:[{x:8,y:12,w:3}],
+},
+// 4
+{ name:'Bậc Thang Trời', icon:'🏔️', diff:2, desc:'Leo lên cao để đến cổng đích trên đỉnh!', tags:['leo trèo','trung bình'],
+  width:20,height:18,
+  map:[
+    '####################',
+    '#..................#',
+    '#...............E..#',
+    '#............####..#',
+    '#....E.............#',
+    '#....####..........#',
+    '#..................#',
+    '#..........####....#',
+    '#....w.............#',
+    '#..####............#',
+    '#..................#',
+    '#..........####....#',
+    '#.......f..........#',
+    '#..####............#',
+    '#..................#',
+    '#.F.............W..#',
+    '#.######....######.#',
+    '####################',
+  ],
+  firePortal:{x:4,y:1}, waterPortal:{x:15,y:1},
+  firePuddles:[], waterPuddles:[], greenPuddles:[{x:7,y:15,w:3}],
+},
+// 5
+{ name:'Mê Cung Lửa', icon:'🌋', diff:3, desc:'Fireboy tự do, Watergirl phải đi đường vòng.', tags:['khó','maze'],
+  width:24,height:16,
+  map:[
+    '########################',
+    '#......................#',
+    '#.F..............W.....#',
+    '#.####.....######......#',
+    '#......f...............#',
+    '#.##########.....####..#',
+    '#.............w........#',
+    '#.########.............#',
+    '#..........########....#',
+    '#.f............f.......#',
+    '#.####.....####........#',
+    '#..............w.......#',
+    '#.######...............#',
+    '#......................#',
+    '#.........E.....E......#',
+    '########################',
+  ],
+  firePortal:{x:15,y:13}, waterPortal:{x:10,y:13},
+  firePuddles:[{x:2,y:13,w:3},{x:18,y:13,w:3}], waterPuddles:[{x:6,y:13,w:3}], greenPuddles:[],
+},
+// 6
+{ name:'Hầm Tối', icon:'🌑', diff:3, desc:'Hẹp và nhiều bẫy – phối hợp chặt chẽ!', tags:['khó','hẹp'],
+  width:22,height:18,
+  map:[
+    '######################',
+    '#....................#',
+    '#.F........W.........#',
+    '#.##########.........#',
+    '#....................#',
+    '#..........########..#',
+    '#.......w............#',
+    '#..####..............#',
+    '#....................#',
+    '#........####..######',
+    '#.f..................#',
+    '######..............#',
+    '#....................#',
+    '#.....####...####....#',
+    '#..f..............w..#',
+    '#..####..........####',
+    '#........E.....E.....#',
+    '######################',
+  ],
+  firePortal:{x:14,y:15}, waterPortal:{x:9,y:15},
+  firePuddles:[{x:2,y:15,w:3}], waterPuddles:[{x:17,y:15,w:3}], greenPuddles:[],
+},
+// 7
+{ name:'Thác Nước', icon:'🌊', diff:3, desc:'Bản đồ rộng – di chuyển nhanh và khéo léo.', tags:['rộng','nước'],
+  width:26,height:16,
+  map:[
+    '##########################',
+    '#........................#',
+    '#.W......................F#',
+    '######.........########..#',
+    '#........................#',
+    '#.....w.........f........#',
+    '#..####.............####.#',
+    '#........................#',
+    '#..........####..........#',
+    '#.....e.................e#',
+    '#..####.......######.....#',
+    '#........................#',
+    '#.f...........w..........#',
+    '#..####..........####....#',
+    '#........E.....E.........#',
+    '##########################',
+  ],
+  firePortal:{x:14,y:13}, waterPortal:{x:9,y:13},
+  firePuddles:[{x:2,y:13,w:3}], waterPuddles:[{x:17,y:13,w:3}], greenPuddles:[{x:6,y:13,w:3}],
+},
+// 8
+{ name:'Đền Cổ', icon:'🏛️', diff:3, desc:'Kiến trúc đối xứng – ai đi đường nào?', tags:['đối xứng','puzzle'],
+  width:24,height:18,
+  map:[
+    '########################',
+    '#......................#',
+    '#.F............W.......#',
+    '#.####......####.......#',
+    '#......................#',
+    '#..####....####........#',
+    '#....f........w........#',
+    '#....####..####........#',
+    '#......................#',
+    '#..######..######......#',
+    '#......................#',
+    '#....####..####........#',
+    '#..w............f......#',
+    '#....####..####........#',
+    '#......................#',
+    '#.####..........####...#',
+    '#......E.....E.........#',
+    '########################',
+  ],
+  firePortal:{x:13,y:15}, waterPortal:{x:7,y:15},
+  firePuddles:[{x:2,y:15,w:3}], waterPuddles:[{x:17,y:15,w:3}], greenPuddles:[{x:9,y:15,w:3}],
+},
+// 9
+{ name:'Núi Lửa', icon:'🌋🔥', diff:4, desc:'Bản đồ cao nhất – nhiều lửa, nhiều nguy hiểm!', tags:['rất khó','lửa'],
+  width:22,height:20,
+  map:[
+    '######################',
+    '#....................#',
+    '#....E.........E.....#',
+    '#....####...####.....#',
+    '#....................#',
+    '#..####...........###',
+    '#....................#',
+    '#.....f.........w....#',
+    '#.########...########',
+    '#....................#',
+    '#.....####...####....#',
+    '#....................#',
+    '#.##########.........#',
+    '#....................#',
+    '#.........######.....#',
+    '#.f.......w..........#',
+    '#.####...####........#',
+    '#....................#',
+    '#..F...........W.....#',
+    '######################',
+  ],
+  firePortal:{x:4,y:1}, waterPortal:{x:15,y:1},
+  firePuddles:[{x:2,y:17,w:2}], waterPuddles:[{x:16,y:17,w:3}], greenPuddles:[{x:8,y:17,w:4}],
+},
+// 10
+{ name:'Thử Thách Cuối', icon:'👑', diff:5, desc:'Màn Boss – cần kỹ năng lẫn phối hợp hoàn hảo!', tags:['boss','cực khó'],
+  width:26,height:20,
+  map:[
+    '##########################',
+    '#........................#',
+    '#..E..............E......#',
+    '#..####............####..#',
+    '#........................#',
+    '#.######........######...#',
+    '#.....f..........w.......#',
+    '#.##########..##########.#',
+    '#........................#',
+    '#....####....####........#',
+    '#..w..............f......#',
+    '#..####............####..#',
+    '#........................#',
+    '#.########....########...#',
+    '#........................#',
+    '#....####....####........#',
+    '#..f..............w......#',
+    '#..####............####..#',
+    '#.....F............W.....#',
+    '##########################',
+  ],
+  firePortal:{x:3,y:1}, waterPortal:{x:19,y:1},
+  firePuddles:[{x:2,y:17,w:2},{x:10,y:17,w:3}],
+  waterPuddles:[{x:16,y:17,w:2},{x:20,y:17,w:2}],
+  greenPuddles:[{x:6,y:17,w:3}],
+},
+];
+
+// =====================================================
+//  LEVEL SELECT UI
+// =====================================================
+let completedLevels = (() => { try { return JSON.parse(localStorage.getItem('fbwg_c')||'[]'); } catch(e){return[];} })();
+
+function buildLevelGrid() {
+  const grid = document.getElementById('levels-grid');
+  grid.innerHTML = '';
+  const dc = ['','#4ade80','#facc15','#fb923c','#f87171','#c084fc'];
+  const dl = ['','Dễ','Trung bình','Khó','Rất khó','Boss'];
+
+  LEVELS.forEach((lvl,i) => {
+    const done = completedLevels.includes(i);
+    const card = document.createElement('div');
+    card.className = 'level-card' + (done?' completed':'');
+
+    const lc1 = i<3?'#ff4500':i<5?'#ff8c00':i<7?'#7c3aed':i<9?'#f87171':'#c084fc';
+    const lc2 = i<3?'#1e90ff':i<5?'#00bfff':i<7?'#f87171':i<9?'#7c3aed':'#ffd700';
+    card.style.setProperty('--lc',`linear-gradient(135deg,${lc1},${lc2})`);
+
+    let dots='';
+    for(let d=0;d<lvl.diff;d++) dots+=`<span class="diff-dot" style="background:${dc[lvl.diff]}"></span>`;
+    const stars = done?(lvl.diff<=2?'⭐⭐⭐':lvl.diff===3?'⭐⭐':'⭐'):'☆☆☆';
+
+    card.innerHTML = `
+      <div class="lc-num">Màn ${i+1} ${lvl.icon}</div>
+      <div class="lc-name">${lvl.name}</div>
+      <div class="lc-desc">${lvl.desc}</div>
+      <div class="lc-tags">${lvl.tags.map(t=>`<span class="lc-tag">${t}</span>`).join('')}</div>
+      <div class="diff-bar">${dots}<span style="font-size:.68rem;color:${dc[lvl.diff]};opacity:.8;margin-left:3px">${dl[lvl.diff]}</span></div>
+      <div class="lc-stars">${stars}</div>
+      ${done?'<span class="lc-badge badge-done">✓ Xong!</span>':(i===0?'<span class="lc-badge badge-new">Mới!</span>':'')}
+    `;
+    card.onclick = () => startSolo(i);
+    grid.appendChild(card);
+  });
+
+  const pct = Math.round(completedLevels.length/LEVELS.length*100);
+  document.getElementById('prog-text').textContent = `${completedLevels.length} / ${LEVELS.length} hoàn thành`;
+  document.getElementById('prog-fill').style.width = pct+'%';
+}
+
+function goLevelSelect() { buildLevelGrid(); showScreen('screen-levels'); }
+function openLevelSelectFromGame() { stopGame(); buildLevelGrid(); showScreen('screen-levels'); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// =====================================================
+//  NETWORKING (P2P)
+// =====================================================
+let peer,conn,myRole='fire',isHost=false,roomCode='';
+
+function selectRole(r){
+  myRole=r;
+  document.getElementById('btn-fire').classList.toggle('active',r==='fire');
+  document.getElementById('btn-water').classList.toggle('active',r==='water');
+}
+
+function genCode(){ return Math.random().toString(36).substring(2,6).toUpperCase(); }
+
+function createRoom(){
+  isHost=true; roomCode=genCode();
+  const btn=document.getElementById('btn-create');
+  btn.disabled=true; btn.textContent='Đang tạo...';
+  peer=new Peer('fbwg-'+roomCode,{host:'0.peerjs.com',port:443,secure:true,
+    config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}]}});
+  peer.on('open',()=>{
+    const area=document.getElementById('room-code-area');
+    area.style.display='flex';
+    document.getElementById('room-code-text').innerHTML=roomCode+'<div class="hint">Click để copy mã</div>';
+    btn.style.display='none';
+  });
+  peer.on('connection',c=>{conn=c;setupConn();document.getElementById('status-msg').innerHTML='<span class="status-dot dot-connecting"></span>Đang kết nối...';});
+  peer.on('error',e=>{alert('Lỗi: '+e.message);btn.disabled=false;btn.textContent='Tạo phòng mới';});
+}
+
+function joinRoom(){
+  const code=document.getElementById('join-code').value.trim().toUpperCase();
+  if(code.length<4){alert('Nhập đủ 4 ký tự!');return;}
+  document.getElementById('btn-join').disabled=true;
+  document.getElementById('join-status').innerHTML='<span class="status-dot dot-connecting"></span>Đang kết nối...';
+  peer=new Peer(null,{host:'0.peerjs.com',port:443,secure:true,
+    config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}]}});
+  peer.on('open',()=>{conn=peer.connect('fbwg-'+code);setupConn();});
+  peer.on('error',()=>{document.getElementById('join-status').textContent='❌ Không tìm thấy phòng';document.getElementById('btn-join').disabled=false;});
+}
+
+function setupConn(){
+  conn.on('open',()=>{
+    document.getElementById('ping-display').style.display='inline';
+    if(isHost){
+      conn.send({type:'start',hostRole:myRole,level:currentLevel});
+      document.getElementById('status-msg').innerHTML='<span class="status-dot dot-connected"></span>Đã kết nối!';
+      setTimeout(startOnlineGame,600);
+    } else {
+      document.getElementById('join-status').innerHTML='<span class="status-dot dot-connected"></span>Đã kết nối!';
+    }
+  });
+  conn.on('data',data=>{
+    if(data.type==='start'){myRole=data.hostRole==='fire'?'water':'fire';currentLevel=data.level;startOnlineGame();}
+    else if(data.type==='input') remoteKeys=data.keys;
+    else if(data.type==='state'&&!isHost) applyHostState(data.state);
+    else if(data.type==='win'){markCompleted();showWin();}
+    else if(data.type==='nextlevel'){currentLevel=data.level;loadLevel();}
+    else if(data.type==='loadlevel'){currentLevel=data.level;loadLevel();}
+  });
+  conn.on('close',()=>{alert('Kết nối bị ngắt!');backToLobby();});
+}
+
+function copyCode(){
+  navigator.clipboard.writeText(roomCode).then(()=>{
+    const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);
+  });
+}
+
+// =====================================================
+//  GAME ENGINE
+// =====================================================
+const TILE=32,GRAVITY=0.5,JUMP=-11.5,SPEED=3.6;
+let canvas,ctx,keys={},remoteKeys={},currentLevel=0;
+let fireGemsCollected=0,waterGemsCollected=0;
+let animFrame,tick=0,gameStarted=false,singlePlayerMode=false;
+let fireboy={},watergirl={},gems=[],portals=[];
+let fireDone=false,waterDone=false,levelStartTime=0;
+let deadShown=false;
+
+function startSolo(lvlIdx){
+  singlePlayerMode=true;isHost=true;myRole='fire';
+  currentLevel=lvlIdx||0;gameStarted=true;
+  openGame();loadLevel();
+  if(!animFrame)gameLoop();
+}
+
+function startOnlineGame(){
+  singlePlayerMode=false;gameStarted=true;
+  openGame();loadLevel();
+  if(!animFrame)gameLoop();
+}
+
+function openGame(){
+  showScreen('screen-game');
+  document.getElementById('mobile-controls').style.display='flex';
+  canvas=document.getElementById('gameCanvas');
+  ctx=canvas.getContext('2d');
+  setupMobileControls();
+}
+
+function loadLevel(){
+  const lvl=LEVELS[currentLevel]||LEVELS[LEVELS.length-1];
+  document.getElementById('level-display').textContent=`${currentLevel+1}: ${lvl.name} ${lvl.icon}`;
+  const mapH=lvl.map.length,mapW=lvl.map[0].length;
+  const wr=document.getElementById('canvas-wrapper');
+  const scale=Math.min(wr.clientWidth/(mapW*TILE),(wr.clientHeight-8)/(mapH*TILE),1.7);
+  canvas.width=mapW*TILE;canvas.height=mapH*TILE;
+  canvas.style.width=(mapW*TILE*scale)+'px';canvas.style.height=(mapH*TILE*scale)+'px';
+
+  fireboy={x:0,y:0,w:22,h:30,vx:0,vy:0,onGround:false,dead:false,dir:1,anim:0};
+  watergirl={x:0,y:0,w:22,h:30,vx:0,vy:0,onGround:false,dead:false,dir:-1,anim:0};
+  gems=[];portals=[];fireDone=false;waterDone=false;
+  fireGemsCollected=0;waterGemsCollected=0;levelStartTime=Date.now();deadShown=false;
+
+  for(let r=0;r<mapH;r++)for(let c=0;c<mapW;c++){
+    const ch=lvl.map[r][c];
+    if(ch==='F'){fireboy.x=c*TILE+TILE/2-11;fireboy.y=r*TILE+TILE-30;}
+    if(ch==='W'){watergirl.x=c*TILE+TILE/2-11;watergirl.y=r*TILE+TILE-30;}
+    if(ch==='f') gems.push({x:c*TILE+8,y:r*TILE+6,w:16,h:16,type:'fire',collected:false});
+    if(ch==='w') gems.push({x:c*TILE+8,y:r*TILE+6,w:16,h:16,type:'water',collected:false});
+    if(ch==='e'||ch==='E') gems.push({x:c*TILE+8,y:r*TILE+6,w:16,h:16,type:'green',collected:false});
+  }
+
+  portals.push({x:lvl.firePortal.x*TILE+4,y:lvl.firePortal.y*TILE-36,w:24,h:36,type:'fire',active:false});
+  portals.push({x:lvl.waterPortal.x*TILE+4,y:lvl.waterPortal.y*TILE-36,w:24,h:36,type:'water',active:false});
+
+  document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('dead-overlay').classList.remove('show');
+  updateGemHUD();
+}
+
+function getLvl(){ return LEVELS[currentLevel]||LEVELS[LEVELS.length-1]; }
+
+function isSolid(tx,ty){
+  const lvl=getLvl();
+  if(ty<0||ty>=lvl.map.length||tx<0||tx>=lvl.map[0].length) return true;
+  return lvl.map[ty][tx]==='#';
+}
+
+function isPuddle(x,y,type){
+  const lvl=getLvl(),mapH=lvl.map.length;
+  const arr=type==='fire'?(lvl.firePuddles||[]):type==='water'?(lvl.waterPuddles||[]):(lvl.greenPuddles||[]);
+  for(const p of arr){
+    const px=p.x*TILE,pw=p.w*TILE,py=(mapH-2)*TILE;
+    if(x>=px&&x<=px+pw&&y>=py-2) return true;
+  }
+  return false;
+}
+
+function updatePlayer(pl,inp,isF){
+  if(pl.dead) return;
+  const left=inp['ArrowLeft']||inp['a'];
+  const right=inp['ArrowRight']||inp['d'];
+  const jump=inp['ArrowUp']||inp['w']||inp[' '];
+
+  if(left){pl.vx=-SPEED;pl.dir=-1;pl.anim+=0.18;}
+  else if(right){pl.vx=SPEED;pl.dir=1;pl.anim+=0.18;}
+  else pl.vx*=0.72;
+
+  if(jump&&pl.onGround){pl.vy=JUMP;pl.onGround=false;}
+  pl.vy=Math.min(pl.vy+GRAVITY,14);
+  pl.x+=pl.vx;resolveX(pl);
+  pl.y+=pl.vy;pl.onGround=false;resolveY(pl);
+
+  const mx=pl.x+pl.w/2,by=pl.y+pl.h;
+  if(isF){ if(isPuddle(mx,by,'water')||isPuddle(mx,by,'green')){pl.dead=true;setTimeout(showDead,350);} }
+  else   { if(isPuddle(mx,by,'fire') ||isPuddle(mx,by,'green')){pl.dead=true;setTimeout(showDead,350);} }
+
+  for(const g of gems){
+    if(g.collected) continue;
+    if(rectsOverlap(pl,g)){
+      if(isF&&g.type==='fire'){g.collected=true;fireGemsCollected++;updateGemHUD();}
+      if(!isF&&g.type==='water'){g.collected=true;waterGemsCollected++;updateGemHUD();}
+      if(g.type==='green'){g.collected=true;isF?fireGemsCollected++:waterGemsCollected++;updateGemHUD();}
+    }
+  }
+
+  for(const p of portals){
+    if(rectsOverlap(pl,p)){
+      if(isF&&p.type==='fire'){fireDone=true;p.active=true;}
+      if(!isF&&p.type==='water'){waterDone=true;p.active=true;}
+    }
+  }
+  if(fireDone&&waterDone) setTimeout(checkWin,200);
+}
+
+function resolveX(pl){
+  const t=TILE,top=Math.floor(pl.y/t),bot=Math.floor((pl.y+pl.h-1)/t);
+  if(pl.vx>0){const tx=Math.floor((pl.x+pl.w)/t);for(let ty=top;ty<=bot;ty++)if(isSolid(tx,ty)){pl.x=tx*t-pl.w;pl.vx=0;break;}}
+  else if(pl.vx<0){const tx=Math.floor(pl.x/t);for(let ty=top;ty<=bot;ty++)if(isSolid(tx,ty)){pl.x=(tx+1)*t;pl.vx=0;break;}}
+  const mw=getLvl().map[0].length*t;
+  if(pl.x<0){pl.x=0;pl.vx=0;}if(pl.x+pl.w>mw){pl.x=mw-pl.w;pl.vx=0;}
+}
+
+function resolveY(pl){
+  const t=TILE,left=Math.floor(pl.x/t),right=Math.floor((pl.x+pl.w-1)/t);
+  if(pl.vy>0){const ty=Math.floor((pl.y+pl.h)/t);for(let tx=left;tx<=right;tx++)if(isSolid(tx,ty)){pl.y=ty*t-pl.h;pl.vy=0;pl.onGround=true;break;}}
+  else if(pl.vy<0){const ty=Math.floor(pl.y/t);for(let tx=left;tx<=right;tx++)if(isSolid(tx,ty)){pl.y=(ty+1)*t;pl.vy=0;break;}}
+  if(pl.y>getLvl().map.length*t){pl.dead=true;setTimeout(showDead,350);}
+}
+
+function rectsOverlap(a,b){ return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y; }
+
+function checkWin(){ if(fireDone&&waterDone){markCompleted();showWin();if(conn&&conn.open&&isHost)conn.send({type:'win'});} }
+
+function markCompleted(){
+  if(!completedLevels.includes(currentLevel)){
+    completedLevels.push(currentLevel);
+    try{localStorage.setItem('fbwg_c',JSON.stringify(completedLevels));}catch(e){}
+  }
+}
+
+function showWin(){
+  const el=(Date.now()-levelStartTime)/1000;
+  const allGems=gems.every(g=>g.collected);
+  const s=el<30&&allGems?'⭐⭐⭐':el<60||allGems?'⭐⭐':'⭐';
+  document.getElementById('win-stars').textContent=s;
+  document.getElementById('win-overlay').classList.add('show');
+}
+
+function showDead(){
+  if(!gameStarted||deadShown) return;
+  deadShown=true;
+  document.getElementById('dead-overlay').classList.add('show');
+}
+
+function nextLevel(){
+  document.getElementById('win-overlay').classList.remove('show');
+  currentLevel=(currentLevel+1)%LEVELS.length;
+  if(conn&&conn.open&&isHost) conn.send({type:'nextlevel',level:currentLevel});
+  loadLevel();
+}
+
+function retryLevel(){
+  document.getElementById('dead-overlay').classList.remove('show');
+  loadLevel();
+}
+
+function updateGemHUD(){
+  document.getElementById('fire-gems').textContent='💎 '+fireGemsCollected;
+  document.getElementById('water-gems').textContent='💎 '+waterGemsCollected;
+}
+
+function applyHostState(s){
+  Object.assign(fireboy,s.fb);Object.assign(watergirl,s.wg);
+  gems.forEach((g,i)=>{if(s.gems[i]!==undefined)g.collected=s.gems[i];});
+  portals.forEach((p,i)=>{if(s.portals[i]!==undefined)p.active=s.portals[i];});
+  fireDone=s.fd;waterDone=s.wd;fireGemsCollected=s.fgc;waterGemsCollected=s.wgc;
+  updateGemHUD();
+}
+
+// =====================================================
+//  GAME LOOP
+// =====================================================
+function gameLoop(){
+  animFrame=requestAnimationFrame(gameLoop);tick++;
+  if(!gameStarted) return;
+
+  if(isHost){
+    let fk,wk;
+    if(singlePlayerMode){
+      fk={ArrowLeft:keys['ArrowLeft'],ArrowRight:keys['ArrowRight'],ArrowUp:keys['ArrowUp']};
+      wk={ArrowLeft:keys['a']||keys['A'],ArrowRight:keys['d']||keys['D'],ArrowUp:keys['w']||keys['W']||keys[' ']};
+    } else if(myRole==='fire'){fk=keys;wk=remoteKeys;}
+    else{fk=remoteKeys;wk=keys;}
+
+    updatePlayer(fireboy,fk,true);
+    updatePlayer(watergirl,wk,false);
+
+    if(conn&&conn.open&&tick%2===0){
+      conn.send({type:'state',state:{
+        fb:{x:fireboy.x,y:fireboy.y,vx:fireboy.vx,vy:fireboy.vy,onGround:fireboy.onGround,dead:fireboy.dead,dir:fireboy.dir,anim:fireboy.anim},
+        wg:{x:watergirl.x,y:watergirl.y,vx:watergirl.vx,vy:watergirl.vy,onGround:watergirl.onGround,dead:watergirl.dead,dir:watergirl.dir,anim:watergirl.anim},
+        gems:gems.map(g=>g.collected),portals:portals.map(p=>p.active),
+        fd:fireDone,wd:waterDone,fgc:fireGemsCollected,wgc:waterGemsCollected
+      }});
+    }
+  } else {
+    if(conn&&conn.open&&tick%2===0) conn.send({type:'input',keys:{...keys}});
+  }
+  draw();
+}
+
+// =====================================================
+//  RENDER
+// =====================================================
+const THEMES=[
+  {bg:'#12082a',w1:'#4a4060',w2:'#2d2040',wl:'rgba(180,160,255,.12)'},
+  {bg:'#180500',w1:'#5a2010',w2:'#3d1208',wl:'rgba(255,130,60,.13)'},
+  {bg:'#001808',w1:'#1e4030',w2:'#102818',wl:'rgba(60,220,120,.1)'},
+  {bg:'#080818',w1:'#283060',w2:'#181838',wl:'rgba(100,120,255,.13)'},
+  {bg:'#180400',w1:'#6a1808',w2:'#3c0e04',wl:'rgba(255,80,40,.14)'},
+  {bg:'#040410',w1:'#1e1e40',w2:'#0e0e28',wl:'rgba(80,80,200,.1)'},
+  {bg:'#001620',w1:'#104050',w2:'#082838',wl:'rgba(60,180,255,.12)'},
+  {bg:'#140812',w1:'#3c1c3c',w2:'#260e26',wl:'rgba(200,80,200,.11)'},
+  {bg:'#1c0800',w1:'#6a2808',w2:'#401408',wl:'rgba(255,110,30,.14)'},
+  {bg:'#0e0018',w1:'#381060',w2:'#20083c',wl:'rgba(180,60,255,.15)'},
+];
+
+function draw(){
+  if(!ctx) return;
+  const lvl=getLvl(),mapH=lvl.map.length,mapW=lvl.map[0].length;
+  const th=THEMES[currentLevel]||THEMES[0];
+
+  ctx.fillStyle=th.bg; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Tiles
+  for(let r=0;r<mapH;r++)for(let c=0;c<mapW;c++){
+    const ch=lvl.map[r][c],x=c*TILE,y=r*TILE;
+    if(ch==='#'){
+      const g=ctx.createLinearGradient(x,y,x+TILE,y+TILE);
+      g.addColorStop(0,th.w1);g.addColorStop(1,th.w2);
+      ctx.fillStyle=g;ctx.fillRect(x,y,TILE,TILE);
+      ctx.strokeStyle=th.wl;ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,TILE-1,TILE-1);
+      if((r+c)%2===0){ctx.fillStyle='rgba(0,0,0,.08)';ctx.fillRect(x+2,y+2,TILE-4,TILE-4);}
+    }
+  }
+
+  // Puddles
+  const fy=(mapH-2)*TILE;
+  drawPuddles(lvl.firePuddles||[],'rgba(255,80,0,.85)','rgba(200,30,0,.95)',fy);
+  drawPuddles(lvl.waterPuddles||[],'rgba(0,160,255,.85)','rgba(0,80,220,.95)',fy);
+  drawPuddles(lvl.greenPuddles||[],'rgba(0,200,60,.8)','rgba(0,100,30,.95)',fy);
+
+  // Portals
+  portals.forEach(p=>drawPortal(p));
+
+  // Gems
+  gems.forEach(g=>{ if(!g.collected) drawGem(g); });
+
+  // Characters
+  drawFireboy(fireboy);
+  drawWatergirl(watergirl);
+}
+
+function drawPuddles(arr,ca,cb,fy){
+  for(const p of arr){
+    const px=p.x*TILE,pw=p.w*TILE;
+    const g=ctx.createLinearGradient(px,fy,px,fy+TILE);
+    g.addColorStop(0,ca);g.addColorStop(1,cb);
+    ctx.fillStyle=g;ctx.fillRect(px,fy,pw,TILE);
+    ctx.save();ctx.globalAlpha=.35;ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1.5;
+    ctx.beginPath();const wo=(tick*.05)%(Math.PI*2);
+    for(let wx=0;wx<=pw;wx+=3){const wy=Math.sin(wx*.18+wo)*2.5;wx===0?ctx.moveTo(px+wx,fy+wy):ctx.lineTo(px+wx,fy+wy);}
+    ctx.stroke();ctx.restore();
+  }
+}
+
+function drawPortal(p){
+  const glow=p.type==='fire'?(p.active?'#ff8800':'#ff4400'):(p.active?'#44aaff':'#0066ff');
+  ctx.save();ctx.shadowColor=glow;ctx.shadowBlur=p.active?22:14;
+  const pg=ctx.createLinearGradient(p.x,p.y,p.x,p.y+p.h);
+  if(p.type==='fire'){pg.addColorStop(0,p.active?'#ff8800':'#882200');pg.addColorStop(1,p.active?'#ffcc00':'#441100');}
+  else{pg.addColorStop(0,p.active?'#44aaff':'#224488');pg.addColorStop(1,p.active?'#0066ff':'#112244');}
+  ctx.fillStyle=pg;ctx.beginPath();ctx.roundRect(p.x,p.y,p.w,p.h,[10,10,0,0]);ctx.fill();
+  ctx.strokeStyle=glow;ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle=p.active?'rgba(255,255,255,.9)':'rgba(255,255,255,.3)';
+  ctx.font=p.active?'bold 13px serif':'11px serif';ctx.textAlign='center';
+  ctx.fillText(p.active?'▲':p.type==='fire'?'🔥':'💧',p.x+p.w/2,p.y+p.h/2+5);
+  ctx.restore();
+}
+
+function drawGem(g){
+  const t=tick*.05,gy=g.y+Math.sin(t+g.x*.1)*3;
+  ctx.save();ctx.shadowBlur=10;
+  const C={fire:['#ff4400','#ffaa00','#ff6600'],water:['#0088ff','#88ddff','#00aaff'],green:['#00cc66','#88ffcc','#00ee88']};
+  const [c1,c2,cg]=C[g.type]||C.green;
+  ctx.shadowColor=cg;ctx.fillStyle=c1;diamond(ctx,g.x+g.w/2,gy+g.h/2,7);
+  ctx.fillStyle=c2;diamond(ctx,g.x+g.w/2,gy+g.h/2,3.5);
+  ctx.restore();
+}
+
+function diamond(ctx,cx,cy,r){ctx.beginPath();ctx.moveTo(cx,cy-r);ctx.lineTo(cx+r,cy);ctx.lineTo(cx,cy+r);ctx.lineTo(cx-r,cy);ctx.closePath();ctx.fill();}
+
+function drawFireboy(pl){
+  if(!pl||pl.x===undefined) return;
+  ctx.save();if(pl.dead)ctx.globalAlpha=.22;
+  const cx=pl.x+pl.w/2,bob=pl.onGround?Math.sin(pl.anim)*1.5:0;
+  ctx.shadowColor='#ff4400';ctx.shadowBlur=10;
+  const bg=ctx.createRadialGradient(cx-3,pl.y+pl.h/2+bob,2,cx,pl.y+pl.h/2+bob,13);
+  bg.addColorStop(0,'#ff8800');bg.addColorStop(1,'#cc2200');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(pl.x+2,pl.y+8+bob,pl.w-4,pl.h-8,7);ctx.fill();
+  ctx.fillStyle='#ff6600';ctx.beginPath();ctx.arc(cx,pl.y+8+bob,10,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=16;ctx.shadowColor='#ffaa00';ctx.fillStyle='#ffcc00';
+  for(let i=-1;i<=1;i++){
+    ctx.beginPath();ctx.moveTo(cx+i*5,pl.y+4+bob);
+    ctx.quadraticCurveTo(cx+i*7+Math.sin(tick*.15)*2,pl.y-5+bob+Math.cos(tick*.1+i)*3,cx+i*3,pl.y-9+bob);
+    ctx.quadraticCurveTo(cx+i*2,pl.y+2+bob,cx+i*5,pl.y+4+bob);ctx.fill();
+  }
+  ctx.shadowBlur=0;
+  const ex=pl.dir>0?cx+3:cx-3;
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ex,pl.y+7+bob,3.5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#111';ctx.beginPath();ctx.arc(ex+pl.dir*.6,pl.y+7+bob,2,0,Math.PI*2);ctx.fill();
+  const la=pl.onGround?Math.sin(pl.anim)*5:0;
+  ctx.fillStyle='#aa2200';
+  ctx.fillRect(pl.x+3,pl.y+pl.h-10,8,10+la);ctx.fillRect(pl.x+pl.w-11,pl.y+pl.h-10,8,10-la);
+  ctx.restore();
+}
+
+function drawWatergirl(pl){
+  if(!pl||pl.x===undefined) return;
+  ctx.save();if(pl.dead)ctx.globalAlpha=.22;
+  const cx=pl.x+pl.w/2,bob=pl.onGround?Math.sin(pl.anim+1)*1.5:0;
+  ctx.shadowColor='#0088ff';ctx.shadowBlur=10;
+  const bg=ctx.createRadialGradient(cx-3,pl.y+pl.h/2+bob,2,cx,pl.y+pl.h/2+bob,13);
+  bg.addColorStop(0,'#44bbff');bg.addColorStop(1,'#0044cc');
+  ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(pl.x+2,pl.y+8+bob,pl.w-4,pl.h-8,7);ctx.fill();
+  ctx.fillStyle='#0055ee';
+  ctx.beginPath();ctx.moveTo(pl.x+2,pl.y+20+bob);ctx.lineTo(pl.x-2,pl.y+pl.h+bob);
+  ctx.lineTo(pl.x+pl.w+2,pl.y+pl.h+bob);ctx.lineTo(pl.x+pl.w-2,pl.y+20+bob);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#22aaff';ctx.beginPath();ctx.arc(cx,pl.y+8+bob,10,0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=14;ctx.shadowColor='#00ccff';ctx.fillStyle='#00ccff';
+  ctx.beginPath();ctx.moveTo(cx,pl.y+bob);
+  ctx.quadraticCurveTo(cx+12+Math.sin(tick*.12)*3,pl.y+5+bob,cx+7,pl.y+15+bob);
+  ctx.quadraticCurveTo(cx+4,pl.y+8+bob,cx,pl.y+bob);ctx.fill();
+  ctx.shadowBlur=0;
+  const ex=pl.dir>0?cx+3:cx-3;
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ex,pl.y+7+bob,3.5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#003388';ctx.beginPath();ctx.arc(ex+pl.dir*.6,pl.y+7+bob,2,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#003388';ctx.lineWidth=1;
+  for(let e=0;e<3;e++){ctx.beginPath();ctx.moveTo(ex-2+e*2,pl.y+4.5+bob);ctx.lineTo(ex-3+e*2,pl.y+2.5+bob);ctx.stroke();}
+  const la=pl.onGround?Math.sin(pl.anim+1)*5:0;
+  ctx.fillStyle='#0033bb';
+  ctx.fillRect(pl.x+4,pl.y+pl.h-8,7,8+la);ctx.fillRect(pl.x+pl.w-11,pl.y+pl.h-8,7,8-la);
+  ctx.restore();
+}
+
+// =====================================================
+//  INPUT
+// =====================================================
+document.addEventListener('keydown',e=>{
+  keys[e.key]=true;
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+});
+document.addEventListener('keyup',e=>{keys[e.key]=false;});
+
+function setupMobileControls(){
+  document.querySelectorAll('.dpad-btn').forEach(btn=>{
+    const k=btn.dataset.key;
+    btn.addEventListener('touchstart',e=>{e.preventDefault();keys[k]=true;btn.classList.add('pressed');},{passive:false});
+    btn.addEventListener('touchend',e=>{e.preventDefault();keys[k]=false;btn.classList.remove('pressed');},{passive:false});
+    btn.addEventListener('mousedown',()=>{keys[k]=true;btn.classList.add('pressed');});
+    btn.addEventListener('mouseup',()=>{keys[k]=false;btn.classList.remove('pressed');});
+  });
+}
+
+// =====================================================
+//  NAVIGATION
+// =====================================================
+function stopGame(){ gameStarted=false; }
+
+function backToLobby(){
+  stopGame();
+  if(conn){try{conn.close();}catch(e){}conn=null;}
+  if(peer){try{peer.destroy();}catch(e){}peer=null;}
+  document.getElementById('mobile-controls').style.display='none';
+  document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('dead-overlay').classList.remove('show');
+  document.getElementById('ping-display').style.display='none';
+  document.getElementById('btn-create').disabled=false;
+  document.getElementById('btn-create').textContent='Tạo phòng mới';
+  document.getElementById('btn-create').style.display='';
+  document.getElementById('room-code-area').style.display='none';
+  document.getElementById('btn-join').disabled=false;
+  document.getElementById('join-status').textContent='';
+  showScreen('screen-lobby');
+}
+
+// Boot
+gameLoop();
+</script>
+</body>
+</html>
