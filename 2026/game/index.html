@@ -285,12 +285,20 @@ canvas{display:block;image-rendering:pixelated;}
 
 <script>
 // =====================================================
-//  10 LEVELS
+//  KÝ TỰ BẢN ĐỒ (MAP LEGEND)
+//  # = tường/sàn cứng        . = không khí
+//  F = Fireboy xuất phát      W = Watergirl xuất phát
+//  P = cổng đích Fireboy      Q = cổng đích Watergirl
+//  f = đá quý lửa 🔥          w = đá quý nước 💧
+//  e / E = đá quý xanh 💚
+//  R = ao lửa  (Watergirl chết nếu đứng lên mặt)   – nằm trong lòng đất
+//  B = ao nước (Fireboy chết nếu đứng lên mặt)     – nằm trong lòng đất
+//  G = ao độc  (cả hai chết nếu đứng lên mặt)      – nằm trong lòng đất
+//  Ao chiếm 1 ô trong map; engine tô màu & kiểm tra va chạm từ phía trên.
 // =====================================================
 const LEVELS = [
 // 1
 { name:'Khởi Đầu', icon:'🌱', diff:1, desc:'Màn tutorial – học phối hợp cùng nhau.', tags:['tutorial','dễ'],
-  width:20,height:14,
   map:[
     '####################',
     '#..................#',
@@ -304,15 +312,12 @@ const LEVELS = [
     '#..................#',
     '#..####............#',
     '#..................#',
-    '#.........E....E...#',
-    '####################',
+    '#.P....Q...........#',  // P=cổng lửa, Q=cổng nước, R=ao lửa
+    '####RRR#############',
   ],
-  firePortal:{x:16,y:11}, waterPortal:{x:10,y:11},
-  firePuddles:[{x:2,y:11,w:3}], waterPuddles:[{x:6,y:11,w:3}], greenPuddles:[],
 },
 // 2
 { name:'Hố Lửa', icon:'🔥', diff:2, desc:'Nhiều ao lửa – Watergirl phải cẩn thận!', tags:['lửa','trung bình'],
-  width:22,height:15,
   map:[
     '######################',
     '#....................#',
@@ -325,19 +330,14 @@ const LEVELS = [
     '#......####..........#',
     '#....f....f....w.....#',
     '#....................#',
-    '#.####.......####....#',
+    '#.####.......##R#....#',
     '#....................#',
-    '#.......E.....E......#',
-    '######################',
+    '#........P........Q..#',
+    '##RR##BB####RR##BB####',
   ],
-  firePortal:{x:14,y:12}, waterPortal:{x:8,y:12},
-  firePuddles:[{x:2,y:12,w:2},{x:7,y:12,w:2}],
-  waterPuddles:[{x:12,y:12,w:2},{x:17,y:12,w:2}],
-  greenPuddles:[],
 },
 // 3
 { name:'Đầm Lầy', icon:'☣️', diff:2, desc:'Ao xanh độc – cả hai đều phải tránh!', tags:['ao độc','trung bình'],
-  width:22,height:15,
   map:[
     '######################',
     '#....................#',
@@ -352,21 +352,18 @@ const LEVELS = [
     '#........######......#',
     '#....................#',
     '#...####.......####..#',
-    '#..e......E......e...#',
+    '#.Q.BB.GGGP...RRQ....#',
     '######################',
   ],
-  firePortal:{x:14,y:12}, waterPortal:{x:5,y:12},
-  firePuddles:[{x:2,y:12,w:2}], waterPuddles:[{x:17,y:12,w:2}], greenPuddles:[{x:8,y:12,w:3}],
 },
 // 4
 { name:'Bậc Thang Trời', icon:'🏔️', diff:2, desc:'Leo lên cao để đến cổng đích trên đỉnh!', tags:['leo trèo','trung bình'],
-  width:20,height:18,
   map:[
     '####################',
+    '#..P...........Q...#',  // cổng ở trên đỉnh
     '#..................#',
-    '#...............E..#',
     '#............####..#',
-    '#....E.............#',
+    '#....e.............#',
     '#....####..........#',
     '#..................#',
     '#..........####....#',
@@ -378,15 +375,12 @@ const LEVELS = [
     '#..####............#',
     '#..................#',
     '#.F.............W..#',
-    '#.######....######.#',
+    '#.######GGG#######.#',
     '####################',
   ],
-  firePortal:{x:4,y:1}, waterPortal:{x:15,y:1},
-  firePuddles:[], waterPuddles:[], greenPuddles:[{x:7,y:15,w:3}],
 },
 // 5
 { name:'Mê Cung Lửa', icon:'🌋', diff:3, desc:'Fireboy tự do, Watergirl phải đi đường vòng.', tags:['khó','maze'],
-  width:24,height:16,
   map:[
     '########################',
     '#......................#',
@@ -402,15 +396,12 @@ const LEVELS = [
     '#..............w.......#',
     '#.######...............#',
     '#......................#',
-    '#.........E.....E......#',
+    '#.RRQ....P.RRRR.....Q..#',
     '########################',
   ],
-  firePortal:{x:15,y:13}, waterPortal:{x:10,y:13},
-  firePuddles:[{x:2,y:13,w:3},{x:18,y:13,w:3}], waterPuddles:[{x:6,y:13,w:3}], greenPuddles:[],
 },
 // 6
 { name:'Hầm Tối', icon:'🌑', diff:3, desc:'Hẹp và nhiều bẫy – phối hợp chặt chẽ!', tags:['khó','hẹp'],
-  width:22,height:18,
   map:[
     '######################',
     '#....................#',
@@ -428,15 +419,12 @@ const LEVELS = [
     '#.....####...####....#',
     '#..f..............w..#',
     '#..####..........####',
-    '#........E.....E.....#',
+    '#.RRRQ....P...BBBQ...#',
     '######################',
   ],
-  firePortal:{x:14,y:15}, waterPortal:{x:9,y:15},
-  firePuddles:[{x:2,y:15,w:3}], waterPuddles:[{x:17,y:15,w:3}], greenPuddles:[],
 },
 // 7
 { name:'Thác Nước', icon:'🌊', diff:3, desc:'Bản đồ rộng – di chuyển nhanh và khéo léo.', tags:['rộng','nước'],
-  width:26,height:16,
   map:[
     '##########################',
     '#........................#',
@@ -452,15 +440,12 @@ const LEVELS = [
     '#........................#',
     '#.f...........w..........#',
     '#..####..........####....#',
-    '#........E.....E.........#',
+    '#.RRRQ..GGGP..BBBQ.......#',
     '##########################',
   ],
-  firePortal:{x:14,y:13}, waterPortal:{x:9,y:13},
-  firePuddles:[{x:2,y:13,w:3}], waterPuddles:[{x:17,y:13,w:3}], greenPuddles:[{x:6,y:13,w:3}],
 },
 // 8
 { name:'Đền Cổ', icon:'🏛️', diff:3, desc:'Kiến trúc đối xứng – ai đi đường nào?', tags:['đối xứng','puzzle'],
-  width:24,height:18,
   map:[
     '########################',
     '#......................#',
@@ -478,19 +463,16 @@ const LEVELS = [
     '#....####..####........#',
     '#......................#',
     '#.####..........####...#',
-    '#......E.....E.........#',
+    '#.RRRQ..GGGP..BBBQ.....#',
     '########################',
   ],
-  firePortal:{x:13,y:15}, waterPortal:{x:7,y:15},
-  firePuddles:[{x:2,y:15,w:3}], waterPuddles:[{x:17,y:15,w:3}], greenPuddles:[{x:9,y:15,w:3}],
 },
 // 9
 { name:'Núi Lửa', icon:'🌋🔥', diff:4, desc:'Bản đồ cao nhất – nhiều lửa, nhiều nguy hiểm!', tags:['rất khó','lửa'],
-  width:22,height:20,
   map:[
     '######################',
+    '#.P...........Q......#',  // cổng trên đỉnh
     '#....................#',
-    '#....E.........E.....#',
     '#....####...####.....#',
     '#....................#',
     '#..####...........###',
@@ -507,18 +489,16 @@ const LEVELS = [
     '#.####...####........#',
     '#....................#',
     '#..F...........W.....#',
+    '#.RRGGGRRRRGGGGBBBR..#',
     '######################',
   ],
-  firePortal:{x:4,y:1}, waterPortal:{x:15,y:1},
-  firePuddles:[{x:2,y:17,w:2}], waterPuddles:[{x:16,y:17,w:3}], greenPuddles:[{x:8,y:17,w:4}],
 },
 // 10
 { name:'Thử Thách Cuối', icon:'👑', diff:5, desc:'Màn Boss – cần kỹ năng lẫn phối hợp hoàn hảo!', tags:['boss','cực khó'],
-  width:26,height:20,
   map:[
     '##########################',
+    '#.P..................Q...#',  // cổng hai đầu trên đỉnh
     '#........................#',
-    '#..E..............E......#',
     '#..####............####..#',
     '#........................#',
     '#.######........######...#',
@@ -534,13 +514,10 @@ const LEVELS = [
     '#....####....####........#',
     '#..f..............w......#',
     '#..####............####..#',
-    '#....F.............W.....#',
+    '#.....F............W.....#',
+    '#.RRGGGRRP..QBBBGGGRR....#',
     '##########################',
   ],
-  firePortal:{x:3,y:1}, waterPortal:{x:19,y:1},
-  firePuddles:[{x:2,y:17,w:2},{x:10,y:17,w:3}],
-  waterPuddles:[{x:16,y:17,w:2},{x:20,y:17,w:2}],
-  greenPuddles:[{x:6,y:17,w:3}],
 },
 ];
 
@@ -586,8 +563,11 @@ function buildLevelGrid() {
   document.getElementById('prog-fill').style.width = pct+'%';
 }
 
-function goLevelSelect() { buildLevelGrid(); showScreen('screen-levels'); }
-function openLevelSelectFromGame() { stopGame(); buildLevelGrid(); showScreen('screen-levels'); }
+function goLevelSelect() {buildLevelGrid(); showScreen('screen-levels');}
+function openLevelSelectFromGame() {
+  stopGame(); buildLevelGrid(); showScreen('screen-levels');
+  hideWinDead();
+}
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -708,17 +688,20 @@ function loadLevel(){
   gems=[];portals=[];fireDone=false;waterDone=false;
   fireGemsCollected=0;waterGemsCollected=0;levelStartTime=Date.now();deadShown=false;
 
+  // Đọc toàn bộ phần tử từ ký tự map
   for(let r=0;r<mapH;r++)for(let c=0;c<mapW;c++){
     const ch=lvl.map[r][c];
-    if(ch==='F'){fireboy.x=c*TILE+TILE/2-11;fireboy.y=r*TILE+TILE-30;}
-    if(ch==='W'){watergirl.x=c*TILE+TILE/2-11;watergirl.y=r*TILE+TILE-30;}
-    if(ch==='f') gems.push({x:c*TILE+8,y:r*TILE+6,w:16,h:16,type:'fire',collected:false});
-    if(ch==='w') gems.push({x:c*TILE+8,y:r*TILE+6,w:16,h:16,type:'water',collected:false});
-    if(ch==='e'||ch==='E') gems.push({x:c*TILE+8,y:r*TILE+6,w:16,h:16,type:'green',collected:false});
+    const px=c*TILE, py=r*TILE;
+    if(ch==='F'){fireboy.x=px+TILE/2-11;fireboy.y=py+TILE-30;}
+    if(ch==='W'){watergirl.x=px+TILE/2-11;watergirl.y=py+TILE-30;}
+    if(ch==='f') gems.push({x:px+8,y:py+6,w:16,h:16,type:'fire',collected:false});
+    if(ch==='w') gems.push({x:px+8,y:py+6,w:16,h:16,type:'water',collected:false});
+    if(ch==='e'||ch==='E') gems.push({x:px+8,y:py+6,w:16,h:16,type:'green',collected:false});
+    // Cổng P=fire, Q=water: đứng trong ô, nhân vật bước vào sẽ kích hoạt
+    if(ch==='P') portals.push({col:c,row:r,x:px+3,y:py,w:26,h:TILE,type:'fire',active:false});
+    if(ch==='Q') portals.push({col:c,row:r,x:px+3,y:py,w:26,h:TILE,type:'water',active:false});
+    // R/B/G là ao, nằm trong ô, sát thương khi chân nhân vật chạm mặt trên ô
   }
-
-  portals.push({x:lvl.firePortal.x*TILE+4,y:lvl.firePortal.y*TILE-36,w:24,h:36,type:'fire',active:false});
-  portals.push({x:lvl.waterPortal.x*TILE+4,y:lvl.waterPortal.y*TILE-36,w:24,h:36,type:'water',active:false});
 
   document.getElementById('win-overlay').classList.remove('show');
   document.getElementById('dead-overlay').classList.remove('show');
@@ -727,20 +710,72 @@ function loadLevel(){
 
 function getLvl(){ return LEVELS[currentLevel]||LEVELS[LEVELS.length-1]; }
 
-function isSolid(tx,ty){
+// LIQUID_FRAC: 1/3 trên của ô ao là chất lỏng (đi xuyên được, gây chết)
+//              2/3 dưới là đất đặc (cản vật lý như tường)
+const LIQUID_FRAC = 1/3;
+
+// Lấy ký tự ô tại tile col/row
+function getTileChar(tx,ty){
   const lvl=getLvl();
-  if(ty<0||ty>=lvl.map.length||tx<0||tx>=lvl.map[0].length) return true;
-  return lvl.map[ty][tx]==='#';
+  if(ty<0||ty>=lvl.map.length||tx<0||tx>=lvl.map[0].length) return '#';
+  return lvl.map[ty][tx];
 }
 
-function isPuddle(x,y,type){
-  const lvl=getLvl(),mapH=lvl.map.length;
-  const arr=type==='fire'?(lvl.firePuddles||[]):type==='water'?(lvl.waterPuddles||[]):(lvl.greenPuddles||[]);
-  for(const p of arr){
-    const px=p.x*TILE,pw=p.w*TILE,py=(mapH-2)*TILE;
-    if(x>=px&&x<=px+pw&&y>=py-2) return true;
+// isSolid dùng tile coords (cho resolveX — kiểm tra theo cột)
+// Ao: cả ô đều coi là solid để resolveX chặn di chuyển ngang vào ô ao
+// (nhân vật không thể đi xuyên ngang qua ô ao)
+function isSolid(tx,ty){
+  const ch=getTileChar(tx,ty);
+  return ch==='#'||ch==='R'||ch==='B'||ch==='G';
+}
+
+// isSolidAtPixel(px, py): kiểm tra điểm pixel (px,py) có bị cản không.
+// Dùng cho resolveY để phân biệt phần đất (2/3 dưới) vs phần lỏng (1/3 trên).
+function isSolidAtPixel(px,py){
+  const T=TILE;
+  const tx=Math.floor(px/T), ty=Math.floor(py/T);
+  const ch=getTileChar(tx,ty);
+  if(ch==='#') return true;
+  if(ch==='R'||ch==='B'||ch==='G'){
+    // phần lỏng: py trong khoảng [ty*T, ty*T + T*LIQUID_FRAC)
+    // phần đất:  py trong khoảng [ty*T + T*LIQUID_FRAC, (ty+1)*T)
+    const liqBottom = ty*T + T*LIQUID_FRAC;
+    return py >= liqBottom; // chỉ cản khi ở vùng đất đặc
   }
   return false;
+}
+
+// Trả về loại ao tại tile
+function getPuddleType(tx,ty){
+  const ch=getTileChar(tx,ty);
+  if(ch==='R') return 'fire';
+  if(ch==='B') return 'water';
+  if(ch==='G') return 'green';
+  return null;
+}
+
+// Kiểm tra xem nhân vật có đang ngập trong vùng chất lỏng không.
+// Vùng lỏng = 1/3 trên của ô ao: y ∈ [tileRow*T, tileRow*T + T*LIQUID_FRAC)
+// Nhân vật "ngập" khi bất kỳ điểm nào của thân nằm trong vùng lỏng.
+function getOverlappingPuddle(pl){
+  const T=TILE;
+  // Kiểm tra 4 góc + giữa của nhân vật
+  const testPoints=[
+    [pl.x+4,      pl.y+4],
+    [pl.x+pl.w-4, pl.y+4],
+    [pl.x+4,      pl.y+pl.h-2],
+    [pl.x+pl.w-4, pl.y+pl.h-2],
+    [pl.x+pl.w/2, pl.y+pl.h/2],
+  ];
+  for(const [px,py] of testPoints){
+    const tx=Math.floor(px/T), ty=Math.floor(py/T);
+    const type=getPuddleType(tx,ty);
+    if(type){
+      const liqBottom=ty*T + T*LIQUID_FRAC;
+      if(py < liqBottom) return type; // điểm nằm trong vùng lỏng
+    }
+  }
+  return null;
 }
 
 function updatePlayer(pl,inp,isF){
@@ -758,9 +793,15 @@ function updatePlayer(pl,inp,isF){
   pl.x+=pl.vx;resolveX(pl);
   pl.y+=pl.vy;pl.onGround=false;resolveY(pl);
 
-  const mx=pl.x+pl.w/2,by=pl.y+pl.h;
-  if(isF){ if(isPuddle(mx,by,'water')||isPuddle(mx,by,'green')){pl.dead=true;setTimeout(showDead,350);} }
-  else   { if(isPuddle(mx,by,'fire') ||isPuddle(mx,by,'green')){pl.dead=true;setTimeout(showDead,350);} }
+  // Chết khi bất kỳ phần nào của nhân vật chạm vào vùng chất lỏng (1/3 trên ô ao)
+  if(!pl.dead){
+    const puddle=getOverlappingPuddle(pl);
+    if(puddle){
+      const killed = isF ? (puddle==='water'||puddle==='green')
+                         : (puddle==='fire' ||puddle==='green');
+      if(killed){pl.dead=true;setTimeout(showDead,350);}
+    }
+  }
 
   for(const g of gems){
     if(g.collected) continue;
@@ -781,18 +822,44 @@ function updatePlayer(pl,inp,isF){
 }
 
 function resolveX(pl){
+  // Chỉ '#' mới chặn di chuyển ngang. Ao R/B/G không cản ngang.
   const t=TILE,top=Math.floor(pl.y/t),bot=Math.floor((pl.y+pl.h-1)/t);
-  if(pl.vx>0){const tx=Math.floor((pl.x+pl.w)/t);for(let ty=top;ty<=bot;ty++)if(isSolid(tx,ty)){pl.x=tx*t-pl.w;pl.vx=0;break;}}
-  else if(pl.vx<0){const tx=Math.floor(pl.x/t);for(let ty=top;ty<=bot;ty++)if(isSolid(tx,ty)){pl.x=(tx+1)*t;pl.vx=0;break;}}
+  if(pl.vx>0){const tx=Math.floor((pl.x+pl.w)/t);for(let ty=top;ty<=bot;ty++)if(getTileChar(tx,ty)==='#'){pl.x=tx*t-pl.w;pl.vx=0;break;}}
+  else if(pl.vx<0){const tx=Math.floor(pl.x/t);for(let ty=top;ty<=bot;ty++)if(getTileChar(tx,ty)==='#'){pl.x=(tx+1)*t;pl.vx=0;break;}}
   const mw=getLvl().map[0].length*t;
   if(pl.x<0){pl.x=0;pl.vx=0;}if(pl.x+pl.w>mw){pl.x=mw-pl.w;pl.vx=0;}
 }
 
 function resolveY(pl){
-  const t=TILE,left=Math.floor(pl.x/t),right=Math.floor((pl.x+pl.w-1)/t);
-  if(pl.vy>0){const ty=Math.floor((pl.y+pl.h)/t);for(let tx=left;tx<=right;tx++)if(isSolid(tx,ty)){pl.y=ty*t-pl.h;pl.vy=0;pl.onGround=true;break;}}
-  else if(pl.vy<0){const ty=Math.floor(pl.y/t);for(let tx=left;tx<=right;tx++)if(isSolid(tx,ty)){pl.y=(ty+1)*t;pl.vy=0;break;}}
-  if(pl.y>getLvl().map.length*t){pl.dead=true;setTimeout(showDead,350);}
+  const T=TILE;
+  const left=pl.x+4, right=pl.x+pl.w-4; // kiểm tra 2 cạnh nhân vật
+  if(pl.vy>0){
+    // Rơi xuống: kiểm tra điểm chân theo pixel
+    const footY=pl.y+pl.h;
+    if(isSolidAtPixel(left,footY)||isSolidAtPixel(right,footY)){
+      // Snap lên mặt solid gần nhất
+      // Tìm đúng mặt trên của ô solid tại footY
+      const tx=Math.floor(left/T), ty=Math.floor(footY/T);
+      const ch=getTileChar(tx,ty);
+      let surfaceY;
+      if(ch==='R'||ch==='B'||ch==='G'){
+        // Mặt solid của ao = dưới vùng lỏng = ty*T + T*LIQUID_FRAC
+        surfaceY = ty*T + T*LIQUID_FRAC;
+      } else {
+        surfaceY = ty*T;
+      }
+      pl.y=surfaceY-pl.h; pl.vy=0; pl.onGround=true;
+    }
+  } else if(pl.vy<0){
+    // Nhảy lên: kiểm tra đỉnh đầu
+    const headY=pl.y;
+    const txL=Math.floor(left/T), txR=Math.floor(right/T);
+    const tyH=Math.floor(headY/T);
+    if(isSolid(txL,tyH)||isSolid(txR,tyH)){
+      pl.y=(tyH+1)*T; pl.vy=0;
+    }
+  }
+  if(pl.y>getLvl().map.length*T){pl.dead=true;setTimeout(showDead,350);}
 }
 
 function rectsOverlap(a,b){ return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y; }
@@ -820,6 +887,12 @@ function showDead(){
   document.getElementById('dead-overlay').classList.add('show');
 }
 
+function hideWinDead() {
+  document.getElementById('win-overlay').classList.remove('show');
+  document.getElementById('dead-overlay').classList.remove('show');
+  fireDone=waterDone=falsedeadShown=false;
+}
+
 function nextLevel(){
   document.getElementById('win-overlay').classList.remove('show');
   currentLevel=(currentLevel+1)%LEVELS.length;
@@ -833,8 +906,8 @@ function retryLevel(){
 }
 
 function updateGemHUD(){
-  document.getElementById('fire-gems').textContent='💎 '+fireGemsCollected;
-  document.getElementById('water-gems').textContent='💎 '+waterGemsCollected;
+  document.getElementById('fire-gems').textContent='💎 '+fireGemsCollected+' ';
+  document.getElementById('water-gems').textContent='💎 '+waterGemsCollected+' ';
 }
 
 function applyHostState(s){
@@ -900,7 +973,7 @@ function draw(){
 
   ctx.fillStyle=th.bg; ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  // Tiles
+  // Vẽ tường và ao (ao nằm trong lòng đất)
   for(let r=0;r<mapH;r++)for(let c=0;c<mapW;c++){
     const ch=lvl.map[r][c],x=c*TILE,y=r*TILE;
     if(ch==='#'){
@@ -910,13 +983,11 @@ function draw(){
       ctx.strokeStyle=th.wl;ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,TILE-1,TILE-1);
       if((r+c)%2===0){ctx.fillStyle='rgba(0,0,0,.08)';ctx.fillRect(x+2,y+2,TILE-4,TILE-4);}
     }
+    // Ao: vẽ trong lòng đất, mặt trên bằng mặt trên của ô
+    if(ch==='R') drawPuddleTile(ctx,x,y,'fire',tick);
+    if(ch==='B') drawPuddleTile(ctx,x,y,'water',tick);
+    if(ch==='G') drawPuddleTile(ctx,x,y,'green',tick);
   }
-
-  // Puddles
-  const fy=(mapH-2)*TILE;
-  drawPuddles(lvl.firePuddles||[],'rgba(255,80,0,.85)','rgba(200,30,0,.95)',fy);
-  drawPuddles(lvl.waterPuddles||[],'rgba(0,160,255,.85)','rgba(0,80,220,.95)',fy);
-  drawPuddles(lvl.greenPuddles||[],'rgba(0,200,60,.8)','rgba(0,100,30,.95)',fy);
 
   // Portals
   portals.forEach(p=>drawPortal(p));
@@ -929,30 +1000,182 @@ function draw(){
   drawWatergirl(watergirl);
 }
 
-function drawPuddles(arr,ca,cb,fy){
-  for(const p of arr){
-    const px=p.x*TILE,pw=p.w*TILE;
-    const g=ctx.createLinearGradient(px,fy,px,fy+TILE);
-    g.addColorStop(0,ca);g.addColorStop(1,cb);
-    ctx.fillStyle=g;ctx.fillRect(px,fy,pw,TILE);
-    ctx.save();ctx.globalAlpha=.35;ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=1.5;
-    ctx.beginPath();const wo=(tick*.05)%(Math.PI*2);
-    for(let wx=0;wx<=pw;wx+=3){const wy=Math.sin(wx*.18+wo)*2.5;wx===0?ctx.moveTo(px+wx,fy+wy):ctx.lineTo(px+wx,fy+wy);}
-    ctx.stroke();ctx.restore();
+// Vẽ ô ao R/B/G:
+//   - 1/3 trên (y → y+T/3)    : chất lỏng — nhân vật đi xuyên được, chạm vào chết
+//   - 2/3 dưới (y+T/3 → y+T)  : đất đặc — cản vật lý như tường bình thường
+function drawPuddleTile(ctx,x,y,type,tick){
+  const T=32;
+  const LIQ=Math.round(T/3);   // chiều cao vùng lỏng = 1/3 ô  ≈ 10–11px
+  const DIRT=T-LIQ;            // chiều cao vùng đất  = 2/3 ô
+  const liqY=y;                // vùng lỏng bắt đầu từ đỉnh ô
+  const dirtY=y+LIQ;           // vùng đất bắt đầu ngay dưới vùng lỏng
+
+  const COLORS={
+    fire:  {
+      dirt1:'#3a0600', dirt2:'#200300',
+      liq1:'#ff6600',  liq2:'#cc2200', liq3:'#7a0e00',
+      glow:'rgba(255,90,0,.9)',  wave:'rgba(255,200,80,.8)',
+      spark:'rgba(255,160,40,.6)'
+    },
+    water: {
+      dirt1:'#001535', dirt2:'#000a20',
+      liq1:'#55ccff',  liq2:'#0077dd', liq3:'#002a66',
+      glow:'rgba(60,180,255,.9)', wave:'rgba(180,235,255,.8)',
+      spark:'rgba(140,220,255,.6)'
+    },
+    green: {
+      dirt1:'#001a06', dirt2:'#000e02',
+      liq1:'#44ff88',  liq2:'#00aa40', liq3:'#003318',
+      glow:'rgba(40,220,90,.9)',  wave:'rgba(160,255,200,.8)',
+      spark:'rgba(120,255,160,.6)'
+    },
+  };
+  const C=COLORS[type]||COLORS.green;
+
+  // ── A. Vùng đất đặc (2/3 dưới) ──
+  const dg=ctx.createLinearGradient(x,dirtY,x,y+T);
+  dg.addColorStop(0, C.dirt1);
+  dg.addColorStop(1, C.dirt2);
+  ctx.fillStyle=dg;
+  ctx.fillRect(x, dirtY, T, DIRT);
+
+  // Vân đất (texture nhẹ)
+  ctx.save();
+  ctx.globalAlpha=.12;
+  ctx.fillStyle='#fff';
+  for(let i=0;i<3;i++){
+    const gx=x+4+i*9, gy=dirtY+4+i*5;
+    ctx.fillRect(gx,gy,T-8-i*4,1);
   }
+  ctx.restore();
+
+  // ── B. Vùng chất lỏng (1/3 trên) ──
+  // Gradient đứng: sáng ở mặt trên, tối dần xuống giáp đất
+  const lg=ctx.createLinearGradient(x,liqY,x,dirtY);
+  lg.addColorStop(0,   C.liq1);  // mặt nước sáng
+  lg.addColorStop(0.55, C.liq2);
+  lg.addColorStop(1,   C.liq3);  // giáp đất tối
+  ctx.fillStyle=lg;
+  ctx.fillRect(x, liqY, T, LIQ);
+
+  // ── C. Glow hắt ra phía trên (lên không khí, visible cho player) ──
+  ctx.save();
+  ctx.shadowColor=C.glow; ctx.shadowBlur=14;
+  // Dải sáng mỏng ở chính mặt nước (y)
+  const gg=ctx.createLinearGradient(x,liqY,x,liqY+5);
+  gg.addColorStop(0, C.glow);
+  gg.addColorStop(1,'transparent');
+  ctx.fillStyle=gg;
+  ctx.fillRect(x, liqY, T, 5);
+  ctx.restore();
+
+  // ── D. Sóng gợn trên mặt nước ──
+  ctx.save();
+  ctx.globalAlpha=.9;
+  ctx.strokeStyle=C.wave;
+  ctx.lineWidth=1.5;
+  ctx.shadowColor=C.glow; ctx.shadowBlur=3;
+  const wo=(tick*.08 + x*0.06) % (Math.PI*2);
+  ctx.beginPath();
+  for(let wx=0;wx<=T;wx+=2){
+    const wy=Math.sin(wx*0.3+wo)*1.8;
+    wx===0 ? ctx.moveTo(x+wx, liqY+2+wy)
+           : ctx.lineTo(x+wx, liqY+2+wy);
+  }
+  ctx.stroke();
+  // Sóng thứ 2 (lệch pha)
+  ctx.globalAlpha=.4;
+  ctx.beginPath();
+  for(let wx=0;wx<=T;wx+=2){
+    const wy=Math.sin(wx*0.3+wo+1.8)*1.2;
+    wx===0 ? ctx.moveTo(x+wx, liqY+5+wy)
+           : ctx.lineTo(x+wx, liqY+5+wy);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // ── E. Bong bóng nổi lên trong vùng lỏng ──
+  if(LIQ>6){
+    ctx.save();
+    ctx.strokeStyle=C.spark; ctx.lineWidth=1;
+    for(let b=0;b<3;b++){
+      const bx=x+4+b*10+Math.sin(tick*0.06+b*2.1+x*0.07)*3;
+      // bong bóng đi từ đáy vùng lỏng (dirtY) lên mặt nước (liqY)
+      const fy=(tick*0.6+b*13+x*0.3) % LIQ;
+      const by2=dirtY - 2 - fy;
+      if(by2 > liqY+1){
+        ctx.globalAlpha=0.3+b*0.1;
+        ctx.beginPath(); ctx.arc(bx, by2, 1.2, 0, Math.PI*2); ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  // ── F. Đường phân cách mặt nước–đất (viền rõ ràng) ──
+  ctx.save();
+  ctx.globalAlpha=.5;
+  ctx.strokeStyle=C.dirt1;
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(x,dirtY); ctx.lineTo(x+T,dirtY); ctx.stroke();
+  ctx.restore();
 }
 
 function drawPortal(p){
-  const glow=p.type==='fire'?(p.active?'#ff8800':'#ff4400'):(p.active?'#44aaff':'#0066ff');
-  ctx.save();ctx.shadowColor=glow;ctx.shadowBlur=p.active?22:14;
-  const pg=ctx.createLinearGradient(p.x,p.y,p.x,p.y+p.h);
-  if(p.type==='fire'){pg.addColorStop(0,p.active?'#ff8800':'#882200');pg.addColorStop(1,p.active?'#ffcc00':'#441100');}
-  else{pg.addColorStop(0,p.active?'#44aaff':'#224488');pg.addColorStop(1,p.active?'#0066ff':'#112244');}
-  ctx.fillStyle=pg;ctx.beginPath();ctx.roundRect(p.x,p.y,p.w,p.h,[10,10,0,0]);ctx.fill();
-  ctx.strokeStyle=glow;ctx.lineWidth=2;ctx.stroke();
-  ctx.fillStyle=p.active?'rgba(255,255,255,.9)':'rgba(255,255,255,.3)';
-  ctx.font=p.active?'bold 13px serif':'11px serif';ctx.textAlign='center';
-  ctx.fillText(p.active?'▲':p.type==='fire'?'🔥':'💧',p.x+p.w/2,p.y+p.h/2+5);
+  const T=32;
+  const x=p.col*T, y=p.row*T;
+  const isFire=p.type==='fire';
+  const glow=isFire?(p.active?'#ff8800':'#ff5500'):(p.active?'#44ccff':'#1177ff');
+  const pct=(Math.sin(tick*.06)+1)/2; // nhịp sáng 0..1
+
+  ctx.save();
+  ctx.shadowColor=glow; ctx.shadowBlur=p.active?24:12+pct*8;
+
+  // Thân cổng: hình chữ nhật với vòm cong ở trên
+  const grad=ctx.createLinearGradient(x,y,x,y+T);
+  if(isFire){
+    grad.addColorStop(0,p.active?'#ffcc00':'#cc4400');
+    grad.addColorStop(.5,p.active?'#ff6600':'#882200');
+    grad.addColorStop(1,p.active?'#cc2200':'#441100');
+  } else {
+    grad.addColorStop(0,p.active?'#88eeff':'#0055aa');
+    grad.addColorStop(.5,p.active?'#0099ee':'#003388');
+    grad.addColorStop(1,p.active?'#0055cc':'#001155');
+  }
+  ctx.fillStyle=grad;
+  ctx.beginPath();
+  ctx.roundRect(x+3,y+2,T-6,T-2,[8,8,0,0]);
+  ctx.fill();
+
+  // Viền sáng
+  ctx.strokeStyle=glow; ctx.lineWidth=1.5;
+  ctx.stroke();
+
+  // Vầng sáng nhấp nháy bên trong
+  ctx.globalAlpha=.15+pct*.2;
+  ctx.fillStyle='#fff';
+  ctx.beginPath();
+  ctx.ellipse(x+T/2, y+T/2, T*.28, T*.35, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha=1;
+
+  // Icon + chỉ báo
+  ctx.fillStyle=p.active?'#fff':'rgba(255,255,255,.5)';
+  ctx.font=p.active?`bold ${T*.45}px serif`:`${T*.38}px serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.shadowBlur=0;
+  ctx.fillText(p.active?'▲':(isFire?'🔥':'💧'), x+T/2, y+T/2+1);
+
+  // Hào quang phía trên cổng khi active
+  if(p.active){
+    ctx.globalAlpha=.4;
+    ctx.strokeStyle=glow; ctx.lineWidth=2;
+    for(let i=1;i<=3;i++){
+      ctx.globalAlpha=.4/i;
+      ctx.beginPath();
+      ctx.arc(x+T/2, y+2, i*6, Math.PI, 0);
+      ctx.stroke();
+    }
+  }
   ctx.restore();
 }
 
